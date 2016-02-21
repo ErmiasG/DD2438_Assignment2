@@ -10,21 +10,23 @@ public class DynamicCarController : MotionModel
 		if (desired.magnitude == 0) {
 			return;
 		}
-		desired = desired.normalized;
-		desired *= maxSpeed;
+//		desired = desired.normalized;
+//		desired *= maxSpeed;
 		Vector3 steer = desired - velocity;
 		steer = steer.normalized;
 		steer *= maxForce;
 		applyForce(steer);
 
-		velocity += velocity + acceleration * Time.deltaTime;
+		velocity += velocity + acceleration * Time.fixedDeltaTime;
+		//velocity += acceleration * Time.fixedDeltaTime;
 		if (velocity.magnitude > maxSpeed) {
 			velocity = velocity.normalized;
 			velocity *= maxSpeed;
 		}
+		//Debug.Log (string.Format("Max velocity car==> {0}", maxSpeed));
 		applyRotation (target);
 		//velocity = new Vector3 (Mathf.Sin (theta), 0, Mathf.Cos (theta)) * velocity.magnitude;
-		velocity = Quaternion.AngleAxis(theta* Mathf.Rad2Deg , Vector3.up)* velocity;
+		velocity = Quaternion.AngleAxis(theta * Mathf.Rad2Deg , Vector3.up)* velocity;
 		acceleration *= 0;
 	}		
 }

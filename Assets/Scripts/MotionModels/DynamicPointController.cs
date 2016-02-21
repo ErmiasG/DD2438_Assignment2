@@ -10,13 +10,14 @@ public class DynamicPointController :MotionModel {
 		if (desired.magnitude == 0) {
 			return;
 		}
-		desired = desired.normalized;
-	    desired *= maxSpeed;
+//		desired = desired.normalized;
+//	    desired *= maxSpeed;
 		Vector3 steer = desired - velocity;
 		steer = steer.normalized;
 		steer *= maxForce;
 		applyForce(steer);
-		velocity += acceleration;// in kinematic acceleration is always 0
+		//Debug.Log (string.Format("Max velocity point==> {0}", maxSpeed));
+		velocity += acceleration;
 		if (velocity.magnitude > maxSpeed) {
 			velocity = velocity.normalized;
 			velocity *= maxSpeed;

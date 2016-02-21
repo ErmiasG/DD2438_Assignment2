@@ -12,6 +12,7 @@ public abstract class MotionModel : MonoBehaviour {
 	public List<Transform> wayPoints;
 	public float roadRadius;
 	public Vector3 start;
+	public bool DrawLine;
 
 	protected Vector3 location;
 	protected Vector3 velocity;
@@ -20,13 +21,13 @@ public abstract class MotionModel : MonoBehaviour {
 	protected int targetWayPoint;
 	protected float theta;
 	protected float fixY;
-	private float decelerate = 1f;
+	//private float decelerate = 1f;
 
 	// Use this for initialization
 	void Start () {
 		fixY = transform.position.y;//to avoid rounding error.
 		transform.localScale += new Vector3 (0, 0, carLength);
-		transform.position = new Vector3 (start.x, fixY, start.z);
+		//transform.position = new Vector3 (start.x, fixY, start.z);
 		forward = transform.forward;//set in applyRotation for car models
 		location = new Vector3 (transform.position.x, 0, transform.position.z);
 		velocity = transform.forward;
@@ -40,6 +41,7 @@ public abstract class MotionModel : MonoBehaviour {
 		follow ();
 	}
 
+	//physics
 	void FixedUpdate() {
 		location += (velocity * Time.deltaTime);
 		transform.forward = forward;
@@ -54,7 +56,7 @@ public abstract class MotionModel : MonoBehaviour {
 		if (isTargetReached(targetWayPoint) && targetWayPoint < wayPoints.Count-1) {
 			targetWayPoint++;
 		}
-		Debug.DrawLine (location,wayPoints[targetWayPoint].position, Color.red);
+		//Debug.DrawLine (location,wayPoints[targetWayPoint].position, Color.red);
 	}
 
 	protected void follow() { //set target point and call follow
@@ -101,9 +103,26 @@ public abstract class MotionModel : MonoBehaviour {
 			mass = 1f;
 		}
 		acceleration += force / mass;
+		float distance = distanceToFinish();
+		float brakingDistance =  (maxSpeed)/(10 * maxForce * Time.deltaTime);
+		Debug.Log (string.Format("brakingDistance==> {0}, distance ==>{1}", brakingDistance, distance));
+		if (distance<=brakingDistance) {
+			maxSpeed -= 12 * maxForce * Time.deltaTime;
+			if (maxSpeed < 1) {
+				maxSpeed = 0;
+			}
+		} 
 	}
 
-	Vector3 getNormalPoint (Vector3 p, Vector3 a, Vector3 b)
+	protected float distanceToFinish() {
+		float distance = 0;
+		for (int i = targetWayPoint; i<wayPoints.Count-1; i++) {
+			distance += Vector3.Distance (wayPoints[i].position, location);
+		}
+		return distance;
+	}
+
+	protected Vector3 getNormalPoint (Vector3 p, Vector3 a, Vector3 b)
 	{
 		Vector3 ap = p - a;
 		Vector3 ab = b - a;
@@ -113,7 +132,7 @@ public abstract class MotionModel : MonoBehaviour {
 		return normalPoint;
 	}
 
-	bool isTargetReached(int wayPointIndex){
+	protected bool isTargetReached(int wayPointIndex){
 		Vector3 wayP = new Vector3 (wayPoints[targetWayPoint].position.x, 0, wayPoints[targetWayPoint].position.z);
 		return (wayP - location).magnitude < roadRadius;
 	}
@@ -125,9 +144,11 @@ public abstract class MotionModel : MonoBehaviour {
 				if (wayPoints[i] != null) {
 					Gizmos.DrawSphere (wayPoints[i].position, 0.5f);
 				}
-				Gizmos.DrawLine (wayPoints[i].position,wayPoints[i+1].position);
+				if (DrawLine)
+				  Gizmos.DrawLine (wayPoints[i].position,wayPoints[i+1].position);
 			}
-			Gizmos.DrawSphere (wayPoints[wayPoints.Count - 1].position, 0.5f);
+			if (DrawLine)
+			   Gizmos.DrawSphere (wayPoints[wayPoints.Count - 1].position, 0.5f);
 		}
 	}
 }
