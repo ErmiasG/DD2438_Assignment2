@@ -6,8 +6,6 @@ public class DynamicPointController :MotionModel {
 
 	public override void seek(Vector3 target) 
 	{
-		Vector3 finish = wayPoints [wayPoints.Count - 1].position;
-		float d = (finish - location).magnitude;
 		Vector3 desired = target - location;
 		if (desired.magnitude == 0) {
 			return;
@@ -18,11 +16,11 @@ public class DynamicPointController :MotionModel {
 		steer = steer.normalized;
 		steer *= maxForce;
 		applyForce(steer);
+		velocity += acceleration;// in kinematic acceleration is always 0
+		if (velocity.magnitude > maxSpeed) {
+			velocity = velocity.normalized;
+			velocity *= maxSpeed;
+		}
+		acceleration *= 0;
 	}
-
-	void applyForce(Vector3 force) 
-	{
-		acceleration += force;
-	}
-
 }

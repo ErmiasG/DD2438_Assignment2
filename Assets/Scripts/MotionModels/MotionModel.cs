@@ -8,6 +8,7 @@ public abstract class MotionModel : MonoBehaviour {
 	public float maxForce;
 	public float maxSteeringAngle;
 	public float carLength;
+	public float mass;
 	public List<Transform> wayPoints;
 	public float roadRadius;
 	public Vector3 start;
@@ -15,14 +16,18 @@ public abstract class MotionModel : MonoBehaviour {
 	protected Vector3 location;
 	protected Vector3 velocity;
 	protected Vector3 acceleration;
+	protected Vector3 forward;
 	protected int targetWayPoint;
 	protected float theta;
 	protected float fixY;
+	private float decelerate = 1f;
 
 	// Use this for initialization
 	void Start () {
 		fixY = transform.position.y;//to avoid rounding error.
+		transform.localScale += new Vector3 (0, 0, carLength);
 		transform.position = new Vector3 (start.x, fixY, start.z);
+		forward = transform.forward;//set in applyRotation for car models
 		location = new Vector3 (transform.position.x, 0, transform.position.z);
 		velocity = transform.forward;
 		acceleration = new Vector3 (0, 0, 0);
@@ -33,26 +38,26 @@ public abstract class MotionModel : MonoBehaviour {
 	void Update () {
 		chooseTarget ();
 		follow ();
-		velocity += acceleration;// in kinematic acceleration is always 0
-		velocity = velocity.normalized;
-		velocity *= maxSpeed;
-		Debug.Log (string.Format("******* velocity ==> {0}", velocity));
+	}
+
+	void FixedUpdate() {
 		location += (velocity * Time.deltaTime);
+		transform.forward = forward;
 		transform.position = new Vector3 (location.x, fixY, location.z);
-		acceleration *= 0;
 	}
 
 	//seek will set the appropriate values to acceleration or velocity to
 	//steer the model to target.
 	public abstract void seek (Vector3 target);
 
-	void chooseTarget() {
+	protected void chooseTarget() {
 		if (isTargetReached(targetWayPoint) && targetWayPoint < wayPoints.Count-1) {
 			targetWayPoint++;
 		}
+		Debug.DrawLine (location,wayPoints[targetWayPoint].position, Color.red);
 	}
 
-	void follow() { //set target point and call follow
+	protected void follow() { //set target point and call follow
 		Vector3 predict = new Vector3 (velocity.x, velocity.y, velocity.z);
 		predict = predict.normalized;
 		predict *= 25;// should be calculated from speed
@@ -60,18 +65,42 @@ public abstract class MotionModel : MonoBehaviour {
 		Vector3 a = new Vector3(transform.position.x, 0, transform.position.z);
 		Vector3 b = new Vector3(wayPoints[targetWayPoint].position.x, 0, wayPoints[targetWayPoint].position.z);
 		Vector3 normalPoint = getNormalPoint (predictLoc, a, b);
-
 		Vector3 dir = b - a;
 		dir = dir.normalized;
-		dir *= 10;
-		//Debug.Log (string.Format("normal point ==> {0}, predict Location {1}", normalPoint, predictLoc));
+		dir *= 50;// should be calculated from speed
 		float distance = Vector3.Distance (normalPoint, predictLoc);
-		Debug.Log (string.Format("--------------- distance ==> {0}", distance));
 		if (distance > roadRadius) { //steer only if model drifts outside the road
 			Vector3 target = normalPoint + dir;
 			seek (target);
-			Debug.Log (string.Format("target to seek ==> {0}", target));
 		}
+	}
+
+	//sets rotation angle theta
+	protected void applyRotation (Vector3 target)
+	{
+		Vector3 targetDir = target - location;
+		float radianAngle = 0f;
+		float angle = Vector3.Angle (transform.forward, targetDir);//only returns degree 0 to 180
+		if (angle > maxSteeringAngle) {
+			radianAngle = maxSteeringAngle * Mathf.Deg2Rad;
+		} else {
+			radianAngle = angle * Mathf.Deg2Rad;
+		}
+		if (Vector3.Cross(transform.forward, targetDir).y < 0) {
+			radianAngle = -radianAngle;
+		}
+		angle = velocity.magnitude * Mathf.Tan (radianAngle) / (transform.localScale.z);
+		theta = angle * Time.deltaTime;
+		forward = Quaternion.AngleAxis(theta* Mathf.Rad2Deg , Vector3.up) * forward ;
+	}
+
+
+	protected void applyForce(Vector3 force) 
+	{
+		if (mass <= 0) {
+			mass = 1f;
+		}
+		acceleration += force / mass;
 	}
 
 	Vector3 getNormalPoint (Vector3 p, Vector3 a, Vector3 b)
