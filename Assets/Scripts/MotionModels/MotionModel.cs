@@ -21,7 +21,6 @@ public abstract class MotionModel : MonoBehaviour {
 	protected int targetWayPoint;
 	protected float theta;
 	protected float fixY;
-	//private float decelerate = 1f;
 
 	// Use this for initialization
 	void Start () {
@@ -74,6 +73,8 @@ public abstract class MotionModel : MonoBehaviour {
 		if (distance > roadRadius) { //steer only if model drifts outside the road
 			Vector3 target = normalPoint + dir;
 			seek (target);
+		} else {
+			seek (wayPoints[targetWayPoint].position);
 		}
 	}
 
@@ -104,10 +105,9 @@ public abstract class MotionModel : MonoBehaviour {
 		}
 		acceleration += force / mass;
 		float distance = distanceToFinish();
-		float brakingDistance =  (maxSpeed)/(10 * maxForce * Time.deltaTime);
-		Debug.Log (string.Format("brakingDistance==> {0}, distance ==>{1}", brakingDistance, distance));
-		if (distance<=brakingDistance) {
-			maxSpeed -= 12 * maxForce * Time.deltaTime;
+		float brakingDistance =  (maxSpeed*maxSpeed)/(2*maxForce);
+		if (distance<brakingDistance) {
+			maxSpeed -= maxForce * Time.deltaTime;
 			if (maxSpeed < 1) {
 				maxSpeed = 0;
 			}
@@ -116,7 +116,7 @@ public abstract class MotionModel : MonoBehaviour {
 
 	protected float distanceToFinish() {
 		float distance = 0;
-		for (int i = targetWayPoint; i<wayPoints.Count-1; i++) {
+		for (int i = targetWayPoint; i<wayPoints.Count; i++) {
 			distance += Vector3.Distance (wayPoints[i].position, location);
 		}
 		return distance;
