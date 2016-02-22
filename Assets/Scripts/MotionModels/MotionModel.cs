@@ -12,7 +12,7 @@ public abstract class MotionModel : MonoBehaviour {
 	public List<Transform> wayPoints;
 	public float roadRadius;
 	public Vector3 start;
-	public bool DrawLine;
+	public bool DrawLine = false;
 
 	protected Vector3 location;
 	protected Vector3 velocity;
@@ -21,6 +21,19 @@ public abstract class MotionModel : MonoBehaviour {
 	protected int targetWayPoint;
 	protected float theta;
 	protected float fixY;
+	private bool startSimulation = true;
+
+	public void setWayPoints(List<Transform> wP) {
+		this.wayPoints = wP;
+	}
+
+	public void setStart (Vector3 start) {
+		this.start = start;
+	}
+
+	public void setStartSimulation(bool start) {
+		startSimulation = start;
+	}
 
 	// Use this for initialization
 	void Start () {
@@ -36,12 +49,18 @@ public abstract class MotionModel : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+		if (!startSimulation) {
+			return;
+		}
 		chooseTarget ();
 		follow ();
 	}
 
 	//physics
 	void FixedUpdate() {
+		if (!startSimulation) {
+			return;
+		}
 		location += (velocity * Time.deltaTime);
 		transform.forward = forward;
 		transform.position = new Vector3 (location.x, fixY, location.z);
@@ -108,7 +127,7 @@ public abstract class MotionModel : MonoBehaviour {
 		float brakingDistance =  (maxSpeed*maxSpeed)/(2*maxForce);
 		if (distance<brakingDistance) {
 			maxSpeed -= maxForce * Time.deltaTime;
-			if (maxSpeed < 1) {
+			if (maxSpeed < 1.5f) {
 				maxSpeed = 0;
 			}
 		} 
