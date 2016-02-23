@@ -13,23 +13,17 @@ public class FormationPoints : MonoBehaviour
 	private Vector3[] positions;
 	private int[] assignment;
 
-	// Use this for initialization
-	void OnDrawGizmos ()
+	void OnDrawGizmos()
 	{
-		if (formationPoints.Count == transform.childCount) {
-			for (int i = 0; i < transform.childCount; i++) {
-				transform.GetChild (i).position = new Vector3 (formationPoints [i].x * destance, 0.5f, formationPoints [i].y * destance);
-				Gizmos.DrawSphere (transform.GetChild (i).position, 0.5f);
-			}
-		}
+		Gizmos.DrawSphere (findCenterOfMass(), 1f);
 	}
-
 	/**
 	 * Note for C# and Boo users: use Awake instead of the constructor for initialization, 
 	 * as the serialized state of the component is undefined at construction time.
 	 */ 
 	void Awake ()
 	{
+		Draw ();
 		List<Transform> wP;
 		positions = new Vector3[vehicles.childCount];
 		assignment = new int[vehicles.childCount];
@@ -94,5 +88,27 @@ public class FormationPoints : MonoBehaviour
 		}
 		return dist;
 	}
+
+	void Draw()
+	{
+		if (formationPoints.Count == transform.childCount) {
+			Vector3 center = findCenterOfMass();
+			Vector3 pos;
+			for (int i = 0; i < transform.childCount; i++) {
+				pos = new Vector3 (formationPoints [i].x * destance, 0.5f, formationPoints [i].y * destance);
+				transform.GetChild (i).position = pos + center;
+			}
+		}
+	}
+	
+	Vector3 findCenterOfMass() {
+		int M = vehicles.childCount;
+		Vector3 sum = new Vector3();
+		for (int i = 0; i < vehicles.childCount; i++) {
+			sum += vehicles.GetChild (i).position;
+		}
+		return sum / M;
+	}
+
 
 }
