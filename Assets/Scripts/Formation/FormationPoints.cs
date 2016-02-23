@@ -27,7 +27,7 @@ public class FormationPoints : MonoBehaviour
 	/**
 	 * Note for C# and Boo users: use Awake instead of the constructor for initialization, 
 	 * as the serialized state of the component is undefined at construction time.
-	*/ 
+	 */ 
 	void Awake ()
 	{
 		List<Transform> wP;
