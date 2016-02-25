@@ -6,9 +6,10 @@ public class DynamicPointController :MotionModel {
 
 	public override void seek(Vector3 target) 
 	{
-		if (targetWayPoint == wayPoints.Count-1 && isTargetReached(targetWayPoint)) {
+		if (targetWayPoint == wayPoints.Count-1 && isTargetReached(targetWayPoint) && !movingFormation) {
 			maxSpeed = 0;
 		}
+		//Debug.Log (wayPoints.Count);
 		Vector3 desired = target - location;
 		Vector3 steer;
 		if (desired.magnitude == 0) {

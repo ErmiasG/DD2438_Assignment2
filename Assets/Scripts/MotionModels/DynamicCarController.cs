@@ -6,9 +6,10 @@ public class DynamicCarController : MotionModel
 {
 	public override void seek (Vector3 target)
 	{
-		if (targetWayPoint == wayPoints.Count-1 && isTargetReached(targetWayPoint)) {
+		if (targetWayPoint == wayPoints.Count-1 && isTargetReached(targetWayPoint) && !movingFormation) {
 			maxSpeed = 0;
 		}
+
 		Vector3 desired = target - location;
 		if (desired.magnitude == 0) {
 			return;

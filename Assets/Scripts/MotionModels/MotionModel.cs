@@ -21,18 +21,31 @@ public abstract class MotionModel : MonoBehaviour {
 	protected int targetWayPoint;
 	protected float theta;
 	protected float fixY;
+	protected List<float> maxSpeeds;
 	private bool startSimulation = true;
+	protected bool movingFormation = false;
 
-	public void setWayPoints(List<Transform> wP) {
+	public void setWayPoints(List<Transform> wP, float s) {
 		this.wayPoints = wP;
+		this.maxSpeed = s;
 	}
 
 	public void setStart (Vector3 start) {
 		this.start = start;
 	}
 
+	public void setMovingFormation(bool b) {
+		movingFormation = b;
+	}
+
 	public void setStartSimulation(bool start) {
 		startSimulation = start;
+	}
+
+	public void addWayPoint(Transform wp, float speed) {
+		this.wayPoints = new List<Transform> ();
+		this.wayPoints.Add (wp);
+		this.maxSpeed= speed;
 	}
 
 	// Use this for initialization
@@ -61,7 +74,7 @@ public abstract class MotionModel : MonoBehaviour {
 		if (!startSimulation) {
 			return;
 		}
-		location += (velocity * Time.deltaTime);
+		location += (velocity * Time.fixedDeltaTime);
 		transform.forward = forward;
 		transform.position = new Vector3 (location.x, fixY, location.z);
 	}
@@ -71,7 +84,7 @@ public abstract class MotionModel : MonoBehaviour {
 	public abstract void seek (Vector3 target);
 
 	protected void chooseTarget() {
-		if (isTargetReached(targetWayPoint) && targetWayPoint < wayPoints.Count-1) {
+		if (isTargetReached(targetWayPoint) && targetWayPoint < wayPoints.Count-1 && !movingFormation) {
 			targetWayPoint++;
 		}
 		//Debug.DrawLine (location,wayPoints[targetWayPoint].position, Color.red);
@@ -112,7 +125,7 @@ public abstract class MotionModel : MonoBehaviour {
 			radianAngle = -radianAngle;
 		}
 		angle = velocity.magnitude * Mathf.Tan (radianAngle) / (transform.localScale.z);
-		theta = angle * Time.deltaTime;
+		theta = angle * Time.fixedDeltaTime;
 		forward = Quaternion.AngleAxis(theta* Mathf.Rad2Deg , Vector3.up) * forward ;
 	}
 
