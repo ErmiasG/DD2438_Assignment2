@@ -1,11 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-
 public class FormationPoints : MonoBehaviour
 {
 	public List<Vector2> formationPoints;
 	public Transform vehicles;
+	public Transform centerOfMass;
 	public int destance;
 	public int moveDestance;
 	public bool moving;
@@ -13,13 +13,13 @@ public class FormationPoints : MonoBehaviour
 	private Vector3[] destinations;
 	private Vector3[] positions;
 	private int[] assignment;
-	private int fps = 0;
-	private int steps = 0;
-	private int rnd = 1;
+	int fps;
+	float dist = 0;
+	Vector3 center;
 
 	void OnDrawGizmos ()
 	{
-		Gizmos.DrawSphere (findCenterOfMass (), 1f);
+		centerOfMass.position = findCenterOfMass ();
 	}
 	/**
 	 * Note for C# and Boo users: use Awake instead of the constructor for initialization, 
@@ -30,8 +30,6 @@ public class FormationPoints : MonoBehaviour
 		setFormationPoints ();
 		List<Transform> wP;
 
-		float dist = 0;
-		float dt = Time.fixedDeltaTime;
 		positions = new Vector3[vehicles.childCount];
 		assignment = new int[vehicles.childCount];
 		destinations = new Vector3[transform.childCount];
@@ -46,28 +44,15 @@ public class FormationPoints : MonoBehaviour
 		// do assignment of destination to vehicles.
 		findAssignment ();
 		//set destination for the vehicles.
+		float dt = Time.fixedDeltaTime;
 		for (int i = 0; i < vehicles.childCount; i++) {
 			wP = new List<Transform> ();
-			wP.Add (transform.GetChild (assignment [i]));
 			dist = Vector3.Distance (mm[i].transform.position, transform.GetChild (assignment [i]).position);
-			mm[i].setWayPoints (wP, dist / (dt * 1000));
-			//mm.setStart ();//we can set initial positions here if we want.
-			mm[i].setMovingFormation (moving);
-			mm[i].setStartSimulation (true);
+			wP.Add (transform.GetChild (assignment [i]));
+			mm [i].setWayPoints (wP, dist / (dt * 1000));
+			mm [i].setMovingFormation (moving);
+			mm [i].setStartSimulation (true);
 		}
-//		for (int j = 0; j < 30; j++) {
-//			Vector3 center = new Vector3 (moveDestance, 0, 0);
-//			moveFormation (center);
-//			for (int i = 0; i < vehicles.childCount; i++) {
-//				dist = Vector3.Distance (mm[i].transform.position, transform.GetChild (assignment [i]).position);
-//				mm[i].addWayPoint (transform.GetChild (assignment [i]), dist / (dt * 1000));
-//			}
-//		}
-//		if (moving) {
-//			for (int i = 0; i < vehicles.childCount; i++) {
-//				mm[i].setStartSimulation (true);
-//			}
-//		}
 	}
 
 	void Update ()
@@ -80,30 +65,15 @@ public class FormationPoints : MonoBehaviour
 			return;
 		}
 		fps = 0;
-		float dist = 0;
 		float dt = Time.fixedDeltaTime;
-		if (steps > 50) {
-			rnd = Random.Range (1, 4);
-			steps = 0;
-		}
-		//Debug.Log (rnd);
-		steps++;
-		Vector3 center;
-		if (rnd == 1) { // move north
-			center = new Vector3 (moveDestance, 0, 0);
-		} else if (rnd == 2) { // move east
-			center = new Vector3 (0, 0, moveDestance);
-		} else if (rnd == 3) { // move west
-			center = new Vector3 (0, 0, -moveDestance);
-		} else { //move south
-			center = new Vector3 (-moveDestance, 0, 0);
-		}
+		center = new Vector3 (0, 0, moveDestance);
 		moveFormation (center);
 		List<Transform> wP;
 		for (int i = 0; i < vehicles.childCount; i++) {
 			wP = new List<Transform> ();
 			dist = Vector3.Distance (mm[i].transform.position, transform.GetChild (assignment [i]).position);
 			wP.Add (transform.GetChild (assignment [i]));
+
 			mm[i].setWayPoints (wP, dist / (dt * 1000));
 		}
 
@@ -179,6 +149,4 @@ public class FormationPoints : MonoBehaviour
 		}
 		return sum / M;
 	}
-
-
 }

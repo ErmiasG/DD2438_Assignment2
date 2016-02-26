@@ -5,7 +5,7 @@ public class KinematicCarController : MotionModel
 {
 	public override void seek(Vector3 target) 
 	{
-		if (targetWayPoint == wayPoints.Count-1 && isTargetReached(targetWayPoint)) {
+		if (targetWayPoint == wayPoints.Count-1 && isTargetReached()) {
 			maxSpeed = 0;
 		}
 		Vector3 desired = target - location;

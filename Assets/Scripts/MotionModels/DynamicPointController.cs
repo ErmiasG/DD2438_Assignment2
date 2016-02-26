@@ -6,7 +6,7 @@ public class DynamicPointController :MotionModel {
 
 	public override void seek(Vector3 target) 
 	{
-		if (targetWayPoint == wayPoints.Count-1 && isTargetReached(targetWayPoint) && !movingFormation) {
+		if (targetWayPoint == wayPoints.Count-1 && isTargetReached() && !movingFormation) {
 			maxSpeed = 0;
 		}
 		//Debug.Log (wayPoints.Count);

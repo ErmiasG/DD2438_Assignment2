@@ -42,10 +42,11 @@ public abstract class MotionModel : MonoBehaviour {
 		startSimulation = start;
 	}
 
-	public void addWayPoint(Transform wp, float speed) {
-		this.wayPoints = new List<Transform> ();
+	public void addWayPoint(Transform wp) {
+		if (this.wayPoints == null) {
+			this.wayPoints = new List<Transform> ();
+		}
 		this.wayPoints.Add (wp);
-		this.maxSpeed= speed;
 	}
 
 	// Use this for initialization
@@ -74,7 +75,7 @@ public abstract class MotionModel : MonoBehaviour {
 		if (!startSimulation) {
 			return;
 		}
-		location += (velocity * Time.fixedDeltaTime);
+		location += (velocity * Time.deltaTime);//fixed does not work here
 		transform.forward = forward;
 		transform.position = new Vector3 (location.x, fixY, location.z);
 	}
@@ -84,7 +85,7 @@ public abstract class MotionModel : MonoBehaviour {
 	public abstract void seek (Vector3 target);
 
 	protected void chooseTarget() {
-		if (isTargetReached(targetWayPoint) && targetWayPoint < wayPoints.Count-1 && !movingFormation) {
+		if ( targetWayPoint < wayPoints.Count-1 && isTargetReached()) {
 			targetWayPoint++;
 		}
 		//Debug.DrawLine (location,wayPoints[targetWayPoint].position, Color.red);
@@ -125,7 +126,7 @@ public abstract class MotionModel : MonoBehaviour {
 			radianAngle = -radianAngle;
 		}
 		angle = velocity.magnitude * Mathf.Tan (radianAngle) / (transform.localScale.z);
-		theta = angle * Time.fixedDeltaTime;
+		theta = angle * Time.deltaTime;//fixed does not work here
 		forward = Quaternion.AngleAxis(theta* Mathf.Rad2Deg , Vector3.up) * forward ;
 	}
 
@@ -164,7 +165,7 @@ public abstract class MotionModel : MonoBehaviour {
 		return normalPoint;
 	}
 
-	protected bool isTargetReached(int wayPointIndex){
+	protected bool isTargetReached(){
 		Vector3 wayP = new Vector3 (wayPoints[targetWayPoint].position.x, 0, wayPoints[targetWayPoint].position.z);
 		return (wayP - location).magnitude < roadRadius;
 	}

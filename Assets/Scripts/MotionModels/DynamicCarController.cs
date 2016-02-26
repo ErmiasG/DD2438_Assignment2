@@ -6,7 +6,7 @@ public class DynamicCarController : MotionModel
 {
 	public override void seek (Vector3 target)
 	{
-		if (targetWayPoint == wayPoints.Count-1 && isTargetReached(targetWayPoint) && !movingFormation) {
+		if (targetWayPoint == wayPoints.Count-1 && isTargetReached() && !movingFormation) {
 			maxSpeed = 0;
 		}
 
@@ -18,7 +18,7 @@ public class DynamicCarController : MotionModel
 		steer = steer.normalized;
 		steer *= maxForce;
 		applyForce(steer);
-		velocity += acceleration * Time.fixedDeltaTime;
+		velocity += acceleration * Time.deltaTime;
 		velocity = velocity.normalized;
 		velocity *= maxSpeed;
 		applyRotation (target);
