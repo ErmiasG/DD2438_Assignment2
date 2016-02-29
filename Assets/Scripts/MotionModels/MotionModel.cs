@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 public abstract class MotionModel : MonoBehaviour {
 
@@ -9,6 +10,7 @@ public abstract class MotionModel : MonoBehaviour {
 	public float maxSteeringAngle;
 	public float carLength;
 	public float mass;
+	//public float formationDeadZone;
 	public List<Transform> wayPoints;
 	public float roadRadius;
 	public Vector3 start;
@@ -21,17 +23,40 @@ public abstract class MotionModel : MonoBehaviour {
 	protected int targetWayPoint;
 	protected float theta;
 	protected float fixY;
-	protected List<float> maxSpeeds;
 	private bool startSimulation = true;
 	protected bool movingFormation = false;
+	protected MotionModel leader;
+	private Vector3 target;
+	private MotionModel[] followers;
+	private int id;
+	private int formationDistance;
+	private Vector3[] formationPositions;
+	private List<Vector3> formationPoints;
+	private float NormalSpeed;
+	private float MaximumSpeed;
+	private float MinimumSpeed;
+	private float speedBallisticZone;
+	private float speedControlledZone;
 
-	public void setWayPoints(List<Transform> wP, float s) {
-		this.wayPoints = wP;
-		this.maxSpeed = s;
+
+	public void setId(int id) {
+		this.id = id;
 	}
 
-	public void setStart (Vector3 start) {
-		this.start = start;
+	public int getId() {
+		return this.id;
+	}
+
+	public Vector3 getLocation() {
+		return this.location;
+	}
+
+	public Vector3 getForward() {
+		return this.forward;
+	}
+
+	public void setWayPoints(List<Transform> wP) {
+		this.wayPoints = wP;
 	}
 
 	public void setMovingFormation(bool b) {
@@ -42,14 +67,76 @@ public abstract class MotionModel : MonoBehaviour {
 		startSimulation = start;
 	}
 
-	public void addWayPoint(Transform wp, float speed) {
-		this.wayPoints = new List<Transform> ();
-		this.wayPoints.Add (wp);
-		this.maxSpeed= speed;
+	public void setLeader(MotionModel leader) {
+		this.leader = leader;
 	}
+
+	public MotionModel getLeader() {
+		return this.leader;
+	}
+
+	public MotionModel[] getFollowers() {
+		return this.followers;
+	}
+
+	public void setFollowers(MotionModel[] followers) {
+		this.followers = followers;
+	}
+
+	public void setFormationDist(int dist) {
+		this.formationDistance = dist;
+	}
+
+	public void setFormationPoints (List<Vector3> formationPoints) {
+		this.formationPoints = formationPoints;
+		assignPosition ();
+	}
+
+	public void setSpeedBallisticZone(float bz) {
+		this.speedBallisticZone = bz;
+	}
+	public void setSpeedControlledZone(float cz) {
+		this.speedControlledZone = cz;
+	}
+	public Vector3 getTarget() {
+		if (leader != null) {
+			return leader.getTarget ();
+		} else {
+			//return this.target;
+			return wayPoints[targetWayPoint].position;
+		}
+	}
+
+	public Vector3 getFormationPosition(int id) {
+		if (leader == null) {
+			return formationPositions [id];
+		} else {
+			throw new Exception(String.Format("I am not a leader! Car {0} is the leader",this.leader.getId())); 
+		}
+	}
+
+	private void assignPosition() {
+		formationPositions = new Vector3[formationPoints.Count];
+		formationPositions [this.id] = Vector3.zero;
+
+		Vector3 middel = formationPoints [formationPoints.Count / 2];
+		for (int i = 0, j = 0; i < formationPoints.Count; i++) {
+			if (j == formationPoints.Count / 2) {
+				j++; i--;
+				continue;
+			}
+			if (i != this.id) {
+				formationPositions [i] = formationPoints[j] - middel;
+				formationPositions [i] = Quaternion.Euler (transform.rotation.eulerAngles) * formationPositions [i];
+				j++;
+			}
+		}
+	}
+
 
 	// Use this for initialization
 	void Start () {
+		NormalSpeed = maxSpeed;
 		fixY = transform.position.y;//to avoid rounding error.
 		transform.localScale += new Vector3 (0, 0, carLength);
 		//transform.position = new Vector3 (start.x, fixY, start.z);
@@ -64,9 +151,17 @@ public abstract class MotionModel : MonoBehaviour {
 	void Update () {
 		if (!startSimulation) {
 			return;
+		} 
+		if (!movingFormation || leader == null) { // if not moving formation or have no leader follow path
+			chooseTarget ();
+			follow ();
+			if (leader == null) {
+				rotateFormation ();
+			}
+		} else if (movingFormation && leader != null) {
+			followLeader ();
 		}
-		chooseTarget ();
-		follow ();
+
 	}
 
 	//physics
@@ -74,7 +169,7 @@ public abstract class MotionModel : MonoBehaviour {
 		if (!startSimulation) {
 			return;
 		}
-		location += (velocity * Time.fixedDeltaTime);
+		location += (velocity * Time.deltaTime);//fixed does not work here
 		transform.forward = forward;
 		transform.position = new Vector3 (location.x, fixY, location.z);
 	}
@@ -84,7 +179,7 @@ public abstract class MotionModel : MonoBehaviour {
 	public abstract void seek (Vector3 target);
 
 	protected void chooseTarget() {
-		if (isTargetReached(targetWayPoint) && targetWayPoint < wayPoints.Count-1 && !movingFormation) {
+		if ( targetWayPoint < wayPoints.Count-1 && isTargetReached()) {
 			targetWayPoint++;
 		}
 		//Debug.DrawLine (location,wayPoints[targetWayPoint].position, Color.red);
@@ -103,10 +198,42 @@ public abstract class MotionModel : MonoBehaviour {
 		dir *= 50;// should be calculated from speed
 		float distance = Vector3.Distance (normalPoint, predictLoc);
 		if (distance > roadRadius) { //steer only if model drifts outside the road
-			Vector3 target = normalPoint + dir;
-			seek (target);
+			target = normalPoint + dir;
 		} else {
-			seek (wayPoints[targetWayPoint].position);
+			target = wayPoints[targetWayPoint].position;
+		}
+		seek (target);
+	}
+
+	protected void followLeader () {
+		//Debug.DrawRay (location, leader.getFormationPosition(this.id), Color.green);
+		Vector3 target = getTarget() +  leader.getFormationPosition(this.id);
+		adjustSpeed (leader.getLocation() + leader.getFormationPosition(this.id));
+		seek (target);
+	}
+
+	void adjustSpeed(Vector3 target) {
+		Vector3 desired = target - location;
+		float distance = Vector3.Distance (target, location);
+		float angle = Vector3.Angle (transform.forward, desired);
+		if (angle > 90) {//slow-down
+			//Debug.DrawRay (location, desired, Color.yellow);
+			if (distance >= speedBallisticZone) {
+				maxSpeed = NormalSpeed*0.4f;
+			} else if (distance < speedBallisticZone && distance >= speedControlledZone) {
+				maxSpeed = NormalSpeed* 0.4f *  (speedBallisticZone - speedControlledZone)/distance;
+			} else {
+				maxSpeed = NormalSpeed;
+			}
+		} else {//speed-up
+			if (distance >= speedBallisticZone) {
+				maxSpeed = NormalSpeed*1.4f;
+			} else if (distance < speedBallisticZone && distance >= speedControlledZone) {
+				maxSpeed = NormalSpeed*1.4f * distance / (speedBallisticZone - speedControlledZone);
+			} else {
+				maxSpeed = NormalSpeed;
+			}
+			//Debug.DrawRay (location, desired, Color.green);
 		}
 	}
 
@@ -125,10 +252,17 @@ public abstract class MotionModel : MonoBehaviour {
 			radianAngle = -radianAngle;
 		}
 		angle = velocity.magnitude * Mathf.Tan (radianAngle) / (transform.localScale.z);
-		theta = angle * Time.fixedDeltaTime;
-		forward = Quaternion.AngleAxis(theta* Mathf.Rad2Deg , Vector3.up) * forward ;
+		theta = angle * Time.deltaTime;//fixed does not work here
+		//forward = Quaternion.AngleAxis(theta* Mathf.Rad2Deg , Vector3.up) * forward ;
+		forward = Quaternion.Euler (new Vector3(0,theta* Mathf.Rad2Deg,0)) * forward ; //more efficent
 	}
 
+	void rotateFormation () {
+		for (int i = 0; i < formationPositions.Length; i++) {
+			formationPositions [i] = Quaternion.Euler (new Vector3(0,theta* Mathf.Rad2Deg,0)) * formationPositions [i];
+			Debug.DrawRay (location, formationPositions[i], Color.red);
+		}
+	}
 
 	protected void applyForce(Vector3 force) 
 	{
@@ -136,14 +270,17 @@ public abstract class MotionModel : MonoBehaviour {
 			mass = 1f;
 		}
 		acceleration += force / mass;
-		float distance = distanceToFinish();
-		float brakingDistance =  (maxSpeed*maxSpeed)/(2*maxForce);
-		if (distance<brakingDistance) {
-			maxSpeed -= maxForce * Time.deltaTime;
-			if (maxSpeed < 1.5f) {
-				maxSpeed = 0;
-			}
-		} 
+		if (!movingFormation) {
+			float distance = distanceToFinish();
+			float brakingDistance =  (maxSpeed*maxSpeed)/(2*maxForce);
+			if (distance<brakingDistance) {
+				maxSpeed -= maxForce * Time.deltaTime;
+				if (maxSpeed < 1.5f) {
+					maxSpeed = 0;
+				}
+			} 
+		}
+
 	}
 
 	protected float distanceToFinish() {
@@ -164,7 +301,7 @@ public abstract class MotionModel : MonoBehaviour {
 		return normalPoint;
 	}
 
-	protected bool isTargetReached(int wayPointIndex){
+	protected bool isTargetReached(){
 		Vector3 wayP = new Vector3 (wayPoints[targetWayPoint].position.x, 0, wayPoints[targetWayPoint].position.z);
 		return (wayP - location).magnitude < roadRadius;
 	}
