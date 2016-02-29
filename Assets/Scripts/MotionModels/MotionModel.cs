@@ -57,6 +57,7 @@ public abstract class MotionModel : MonoBehaviour {
 
 	public void setWayPoints(List<Transform> wP) {
 		this.wayPoints = wP;
+        
 	}
 
 	public void setMovingFormation(bool b) {
@@ -156,10 +157,10 @@ public abstract class MotionModel : MonoBehaviour {
 			chooseTarget ();
 			follow ();
 			if (leader == null) {
-				rotateFormation ();
+			//	rotateFormation ();
 			}
 		} else if (movingFormation && leader != null) {
-			followLeader ();
+			//followLeader ();
 		}
 
 	}

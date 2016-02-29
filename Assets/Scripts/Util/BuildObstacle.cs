@@ -73,6 +73,7 @@ public class BuildObstacle : MonoBehaviour {
 			Instantiate (customerPrefab, customersP[i], Quaternion.identity);
 		}
 
+
 	}
 
 }
