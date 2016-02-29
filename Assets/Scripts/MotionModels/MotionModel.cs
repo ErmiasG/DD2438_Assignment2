@@ -27,7 +27,7 @@ public abstract class MotionModel : MonoBehaviour {
 	protected bool movingFormation = false;
 	protected MotionModel leader;
 	private Vector3 target;
-	private MotionModel[] followers;
+	private List<MotionModel> followers;
 	private int id;
 	private int formationDistance;
 	private Vector3[] formationPositions;
@@ -37,6 +37,7 @@ public abstract class MotionModel : MonoBehaviour {
 	private float MinimumSpeed;
 	private float speedBallisticZone;
 	private float speedControlledZone;
+	private int nextId;
 
 
 	public void setId(int id) {
@@ -48,6 +49,9 @@ public abstract class MotionModel : MonoBehaviour {
 	}
 
 	public Vector3 getLocation() {
+		if (this.leader != null) {
+			return this.leader.getLocation ();
+		}
 		return this.location;
 	}
 
@@ -75,11 +79,14 @@ public abstract class MotionModel : MonoBehaviour {
 		return this.leader;
 	}
 
-	public MotionModel[] getFollowers() {
+	public List<MotionModel> getFollowers() {
+		if (this.followers == null) {
+			this.followers = new List<MotionModel> ();
+		}
 		return this.followers;
 	}
 
-	public void setFollowers(MotionModel[] followers) {
+	public void setFollowers(List<MotionModel> followers) {
 		this.followers = followers;
 	}
 
@@ -88,8 +95,20 @@ public abstract class MotionModel : MonoBehaviour {
 	}
 
 	public void setFormationPoints (List<Vector3> formationPoints) {
-		this.formationPoints = formationPoints;
-		assignPosition ();
+		if (this.leader == null) {
+			this.id = 0;
+			this.nextId = 0;
+			this.formationPoints = formationPoints;
+			assignPosition ();
+		}
+	}
+
+	public int assignId () {
+		if (leader != null) {
+			return leader.assignId ();
+		}
+		nextId++;
+		return nextId;
 	}
 
 	public void setSpeedBallisticZone(float bz) {
@@ -108,10 +127,17 @@ public abstract class MotionModel : MonoBehaviour {
 	}
 
 	public Vector3 getFormationPosition(int id) {
-		if (leader == null) {
+		if (this.leader != null) {
+			return this.leader.getFormationPosition (id);
+		}
+		if (formationPositions != null && followers.Count > 0 ) {
 			return formationPositions [id];
 		} else {
-			throw new Exception(String.Format("I am not a leader! Car {0} is the leader",this.leader.getId())); 
+			if (this.leader != null) {
+				throw new Exception (String.Format ("I car {0} not a leader! Car {1} is the leader", this.id, this.leader.getId ())); 
+			} else {
+				throw new Exception (String.Format ("I car {0} not a leader! do not know the leader", this.id));
+			}
 		}
 	}
 
@@ -145,6 +171,9 @@ public abstract class MotionModel : MonoBehaviour {
 		velocity = transform.forward;
 		acceleration = new Vector3 (0, 0, 0);
 		targetWayPoint = 0;
+		if (movingFormation && leader != null) {
+			this.id = leader.assignId ();
+		}
 	}
 	
 	// Update is called once per frame
@@ -155,13 +184,13 @@ public abstract class MotionModel : MonoBehaviour {
 		if (!movingFormation || leader == null) { // if not moving formation or have no leader follow path
 			chooseTarget ();
 			follow ();
-			if (leader == null) {
+			if (leader == null || followers.Count > 0) {
 				rotateFormation ();
 			}
 		} else if (movingFormation && leader != null) {
 			followLeader ();
 		}
-
+		//Debug.DrawRay (location, this.leader.getLocation(), Color.green);
 	}
 
 	//physics

@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
+
 public class FormationPoints : MonoBehaviour
 {
 	public List<Vector2> formationPoints;
@@ -85,7 +87,9 @@ public class FormationPoints : MonoBehaviour
 			mm [0].setFormationPoints (formationPointsV3);
 			mm [0].setSpeedBallisticZone (speedBallisticZone);
 			mm [0].setSpeedControlledZone (speedControlledZone);
-			mm [0].setFollowers (mm);
+			List<MotionModel> f = new List<MotionModel>();
+			f.AddRange (mm);
+			mm [0].setFollowers (f);
 			mm [0].setMovingFormation (movingFormation);
 			mm [0].setStartSimulation (true);
 			for (int i = 1; i < models.childCount; i++) {
@@ -96,7 +100,73 @@ public class FormationPoints : MonoBehaviour
 				mm [i].setMovingFormation (movingFormation);
 				mm [i].setStartSimulation (true);
 			}
-		} 
+		} else {
+			wP = new List<Transform> (wayPoints.childCount);
+			foreach (Transform child in wayPoints) {
+				wP.Add (child);
+			}
+			for (int i = 0; i < models.childCount; i++) {
+				for (int j = i+1; j < models.childCount; j++) {
+					Debug.Log (String.Format ("Distance between {0} - {1} = {2} ",i , j, Vector3.Distance(mm[i].transform.position, mm[j].transform.position)));
+					if (Vector3.Distance(mm[i].transform.position, mm[j].transform.position) < visiblityRadius) {
+						if (mm [i].getFollowers ().Count > mm [j].getFollowers ().Count) {
+							mm [i].getFollowers ().Add (mm [j]);
+							mm [j].setLeader (mm [i]);
+						} else {
+							mm [j].getFollowers ().Add (mm [i]);
+							mm [i].setLeader (mm [j]);
+						}
+					}
+				}
+			}
+			float d = Mathf.Infinity;
+			float minDist = Mathf.Infinity;
+			int closestLeader=0;
+			for (int i = 0; i < models.childCount; i++) {
+				if (mm [i].getLeader() == null && mm [i].getFollowers().Count == 0) { // stray 
+					for (int j = 0; j < models.childCount; j++) {
+						if (i != j) {
+							d = Vector3.Distance (mm [i].transform.position, mm [j].transform.position);
+						}
+						if (d < minDist) {
+							minDist = d;
+							closestLeader = j;
+						}
+					}
+					mm [closestLeader].getFollowers ().Add (mm [i]);
+					mm [i].setLeader (mm [closestLeader]);
+					Debug.Log (String.Format ("{0} is leader to -> {1} ", closestLeader,i));
+				}
+			}
+			List<int> leaders = new List<int> ();
+			for (int i = 0; i < models.childCount; i++) {
+				//mm [i].setId (i);
+				if (mm [i].getLeader() == null) {
+					mm [i].setWayPoints (wP);
+					leaders.Add (i);
+					Debug.Log (String.Format("Car {0} ==> Have no leader! Am going to follow path!", mm [i].getId()));
+				}
+				mm [i].setFormationPoints (formationPointsV3);
+				mm [i].setSpeedBallisticZone (speedBallisticZone);
+				mm [i].setSpeedControlledZone (speedControlledZone);
+				mm [i].setMovingFormation (movingFormation);
+				mm [i].setStartSimulation (true);
+			}
+			if (leaders.Count > 1) {
+				Debug.Log (String.Format("Number of leaders {0} ",leaders.Count));
+				for (int i = 0; i < leaders.Count-1; i++) {
+					mm [leaders [i]].getFollowers ().Add (mm [leaders [i + 1]]);
+					mm [leaders [i + 1]].setLeader (mm [i]);
+				}
+			}
+			for (int i = 0; i < models.childCount; i++) {
+				if (mm [i].getLeader() != null)
+					Debug.Log (String.Format("Car {0} ==> follows {1}",i ,mm [i].getLeader().getId()));
+				Debug.Log (String.Format("Car {0} ==> have {1} followers",i ,mm [i].getFollowers().Count));
+			}
+
+		}
+
 	}
 
 	//tries to find a minimum distance assignment.

@@ -19,8 +19,8 @@ public class CameraController : MonoBehaviour {
 		} else {
 			gameObj = gameObj0;
 		}
-		transform.position = new Vector3(gameObj.transform.position.x,15f,gameObj.transform.position.z);
-		transform.Rotate (new Vector3(1,0,0) * 45);
+		//transform.position = new Vector3(gameObj.transform.position.x,200f,gameObj.transform.position.z);
+		//transform.Rotate (new Vector3(1,0,0) * 90);
 		offset = transform.position - gameObj.transform.position;
 	}
 
