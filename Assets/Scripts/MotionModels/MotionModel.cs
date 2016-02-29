@@ -61,6 +61,7 @@ public abstract class MotionModel : MonoBehaviour {
 
 	public void setWayPoints(List<Transform> wP) {
 		this.wayPoints = wP;
+        
 	}
 
 	public void setMovingFormation(bool b) {
@@ -184,13 +185,12 @@ public abstract class MotionModel : MonoBehaviour {
 		if (!movingFormation || leader == null) { // if not moving formation or have no leader follow path
 			chooseTarget ();
 			follow ();
-			if (leader == null || followers.Count > 0) {
+			if (leader == null) {
 				rotateFormation ();
 			}
 		} else if (movingFormation && leader != null) {
 			followLeader ();
 		}
-		//Debug.DrawRay (location, this.leader.getLocation(), Color.green);
 	}
 
 	//physics
