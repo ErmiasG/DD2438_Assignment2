@@ -9,7 +9,6 @@ public class DynamicPointController :MotionModel {
 		if (targetWayPoint == wayPoints.Count-1 && isTargetReached() && !movingFormation) {
 			maxSpeed = 0;
 		}
-		//Debug.Log (wayPoints.Count);
 		Vector3 desired = target - location;
 		Vector3 steer;
 		if (desired.magnitude == 0) {
@@ -22,6 +21,8 @@ public class DynamicPointController :MotionModel {
 		velocity += acceleration;
 		velocity = velocity.normalized;
 		velocity *= maxSpeed;
+		applyRotation (target);
+		velocity = Quaternion.Euler (new Vector3(0,theta* Mathf.Rad2Deg,0))* velocity;
 		acceleration *= 0;
 	}
 }

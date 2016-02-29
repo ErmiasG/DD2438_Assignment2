@@ -9,12 +9,12 @@ public class DynamicCarController : MotionModel
 		if (targetWayPoint == wayPoints.Count-1 && isTargetReached() && !movingFormation) {
 			maxSpeed = 0;
 		}
-
 		Vector3 desired = target - location;
+		Vector3 steer;
 		if (desired.magnitude == 0) {
 			return;
 		}
-		Vector3 steer = desired - velocity;
+		steer = desired - velocity;
 		steer = steer.normalized;
 		steer *= maxForce;
 		applyForce(steer);
@@ -23,7 +23,7 @@ public class DynamicCarController : MotionModel
 		velocity *= maxSpeed;
 		applyRotation (target);
 		//velocity = new Vector3 (Mathf.Sin (theta), 0, Mathf.Cos (theta)) * velocity.magnitude;
-		velocity = Quaternion.AngleAxis(theta * Mathf.Rad2Deg , Vector3.up)* velocity;
+		velocity = Quaternion.Euler (new Vector3(0,theta* Mathf.Rad2Deg,0))* velocity;
 		acceleration *= 0;
-	}	
+	}			
 }
