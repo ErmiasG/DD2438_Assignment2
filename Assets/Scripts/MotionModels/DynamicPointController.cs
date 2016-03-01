@@ -24,5 +24,6 @@ public class DynamicPointController :MotionModel {
 		applyRotation (target);
 		velocity = Quaternion.Euler (new Vector3(0,theta* Mathf.Rad2Deg,0))* velocity;
 		acceleration *= 0;
+        Debug.Log(velocity.magnitude);
 	}
 }

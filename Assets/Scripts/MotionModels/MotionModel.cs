@@ -16,7 +16,8 @@ public abstract class MotionModel : MonoBehaviour {
 	public Vector3 start;
 	public bool DrawLine = false;
 
-	protected Vector3 location;
+    protected Vector3 collisionAvoidance;
+    protected Vector3 location;
 	protected Vector3 velocity;
 	protected Vector3 acceleration;
 	protected Vector3 forward;
