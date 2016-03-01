@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class BuildObstacle : MonoBehaviour {
 
@@ -10,9 +11,11 @@ public class BuildObstacle : MonoBehaviour {
 	public TextAsset textFile;
 
 	GameObject wall;
-//	GameObject customer;
-//	GameObject start;
-//	GameObject end;
+    //	GameObject customer;
+    //	GameObject start;
+    //	GameObject end;
+
+    List<GameObject> walls = new List<GameObject>();
 
 	// Use this for initialization
 	void Awake () {
@@ -31,7 +34,10 @@ public class BuildObstacle : MonoBehaviour {
 			corrdinats[i] = new Vector3(x, 0 , z);
 			button[i] = float.Parse(tokens [i + 48].Trim());
 		}
-		string[] objects;
+
+
+        List<Vector3> coordinates = new List<Vector3>();
+        string[] objects;
 		for (int i = 24*3 , j = 0; i < tokens.Length -1 ; i++,j++) {
 			objects = System.Text.RegularExpressions.Regex.Split( tokens [i].Trim(), @"\s{2,}");
 			x = float.Parse(objects [0].Trim());
@@ -53,7 +59,12 @@ public class BuildObstacle : MonoBehaviour {
 			if (button[i] == 1) {
 				distance = Vector3.Distance(corrdinats[i] ,corrdinats[i+1]);
 				a = corrdinats[i+1];
-			} else if (button[i] == 3) {
+
+                
+          
+
+                
+            } else if (button[i] == 3) {
 				distance = Vector3.Distance(corrdinats[i] ,corrdinats[firstEdge]);
 				a = corrdinats[firstEdge];
 				firstEdge = i + 1;
@@ -63,7 +74,7 @@ public class BuildObstacle : MonoBehaviour {
 			wall.transform.LookAt(a);
 			wall.transform.position = corrdinats[i] + distance/2 * wall.transform.forward;
 			wall.transform.localScale = new Vector3(wall.transform.localScale.x, wall.transform.localScale.y, distance);
-
+            walls.Add(wall);
 		}
 		for (int i = 0; i < startP.Length; i++) {
 			Instantiate (startPrefab, startP[i], Quaternion.identity);
@@ -74,6 +85,7 @@ public class BuildObstacle : MonoBehaviour {
 		}
 
 
-	}
+        GameObject.Find("Ground").GetComponent<T5Pathcreator>().setWalls(walls);
+    }
 
 }
