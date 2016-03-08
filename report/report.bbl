@@ -1,0 +1,22 @@
+\begin{thebibliography}{1}
+
+\bibitem{berg_visibility_2000}
+Dr~Mark~de Berg, Dr~Marc~van Kreveld, Prof Dr~Mark Overmars, and
+  Dr~Otfried~Cheong Schwarzkopf.
+\newblock Visibility graphs.
+\newblock In {\em Computational Geometry}, pages 307--317. Springer Berlin
+  Heidelberg.
+\newblock {DOI}: 10.1007/978-3-662-04245-8\_15.
+
+\bibitem{lavalle1998rapidly}
+Steven~M LaValle.
+\newblock Rapidly-exploring random trees a new tool for path planning.
+\newblock 1998.
+
+\bibitem{lynch_principles_2005}
+Kevin~M. Lynch and Howie~M. Choset.
+\newblock {\em Principles of Robot Motion: Theory; Algorithms; and
+  Implementation}.
+\newblock The {MIT} Press.
+
+\end{thebibliography}
