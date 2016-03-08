@@ -17,7 +17,7 @@
 
 \graphicspath{{pictures/}}
 
-\title{Report for assignment 1 in the course DD2438 at KTH}
+\title{Report for assignment 2 in the course DD2438 at KTH}
 \author{\hspace*{-0.5cm}
 GROUP10\\
 \begin{tabular}{cccc}
@@ -57,12 +57,12 @@ One of the most fundamental cornerstones of autonomous mobile robots is navigati
 
 More specifically, the work that the report describes focuses on generating a path through the obstacle filled area that the unit could follow. This is referred to as 'Path Planning' and is achieved through various algorithms such as Visibility graphs and RRT, which we will describe and compare in detail during the report. The nature and complexity of these generated paths are dependent on the motion model of the units, which is a term for describing the limitation of which the unit was allowed manoeuvre under. The motion models that were explored in this assignment were Discrete, Kinematic and dynamic point models, differential drive model, and Kinematic and Dynamic car models. All of which will be described in more detail in the following chapters. The area that the units needed to navigate through contained non-convex polygon-shaped obstacles. 
 
-\subsection{Contribution}
-This project is done as an assignment in an introductory course in robotics and does not have any real contribution to the field of robotics. All the algorithms discussed and implemented here are solutions that can be found in many robotics and path planing books. The report will hopefully be useful to any novice in the field seeking an introduction to how different path planning algorithms can be used to navigate to a destination through obstacles. 
-   
+\subsection{Contribution} 
+ This project is done as an assignment in an introductory course in robotics and does not consist of any real contribution to the field of robotics. Most of the algorithms used in this report are simplifications of already well known and established algorithms. 
+The report will however, hopefully be useful to any novice in the field seeking an insight into math and motion planning with multiple agents.   
 
 \subsection{Outline}
-This report is divided in three sections. Section~\ref{sec:relwork} will cover the theoretical part of the work. Motion models and how we can model continues systems in a discrete manner is discussed in Section~\ref{sec:mm}. Section~\ref{sec:pp} will then discuss path planning algorithms. In Section~\ref{sec:method} the implementation details and how the theory discussed in Section~\ref{sec:relwork} is put to practice is described in some detail. Finally the results of some experiments will be presented before concluding the report with our conclusions in Section~\ref{sec:exps}.
+In the Section~\ref{sec:relwork},we will describe the related work that we consulted during the execution of the project. The project itself consists of solving three different problems, which are described together with the attempted solutions in the Section~\ref{sec:method}. The experimental setup, as well as details about the experiments themselves can be found in Section~\ref{sec:exps}. And finally, a short summary of the report is given in the Section~\ref{sec:summary}.
  
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -71,57 +71,8 @@ This report is divided in three sections. Section~\ref{sec:relwork} will cover t
 \section{Related work}
 \label{sec:relwork}
 In this Section, the theoretical back ground needed to understand this paper and a short description of few related works that we found useful before and during the implementation of our solutions are discussed.
-\subsection{Motion models}
+\subsection{}
 \label{sec:mm}
-In path following and planing the form of the robot performing the task and the environment determine the number of degrees of freedom of the system. If the robot can move instantaneously in any direction we call the robot omnidirectional(holonomic constrained) on the other hand if the robot have velocity constraints that prevent it from instantaneously changing direction the robot is called nonholonomic. Besides the degree of freedom a robot can also be modelled by kinematic equations, using velocities as controls or by dynamic equations, using forces as controls. \cite{lynch_principles_2005}    
- 
- In this project we are simulating six motion models, three of which are holonomic and three nonholonomic. We start by analysing the simpler holonomic models: discrete, kinematic point, and dynamic point models. Then we will try to build up to the nonholonomic ones: differential drive, kinematic car, and dynamic car models. 
- 
- \begin{itemize}
-\item \textbf{Discrete point}. In this model all the control does is take the position of the robot and move it's $x$ and $y$ coordinates with a predefined minimum step in order for the robot to end-up at it's desired position.  
-\begin{align*}
-x_{k+1} &= x_{k} + a\\
-y_{k+1} &= y_{k} + b
-\end{align*}
-
-Where $(x,y)$ represent a point in the coordinate system and $a$ and $b$ represent the number of steps the robot takes in $x$ and $y$ direction respectively. 
-
-\item \textbf{Kinematic point model}. Here velocities are used as controls. The position of the robot is not set directly like in the discrete point model but rather as a velocity vector. This will give us a smother model that does not jump from point to point.   
-\begin{align*}
-\dot{x} &= v_x\\
-\dot{y} &= v_y
-\end{align*} 
-Where $\dot{x}$ and $\dot{y}$ are the velocities in the respective directions, and $v_x$ can be calculated using numerical integration of ordinary differential equations $(x_{k+1} - x_{k}) / dt$.
-\item \textbf{Dynamic point model}. Even though kinematic models can give us a smother movement it is still physically impossible to change velocity instantaneously. In reality movement is controlled by forces and dynamic models simulate this by controlling robots via forces instead of velocity.  
-\begin{align*}
-\ddot{x} &= F_x/m \\
-\ddot{y} &= F_y/m
-\end{align*}
-Where $\ddot{x}$ and $\ddot{y}$ are the accelerations acting on the $x$ and $y$ directions, and $F/m$ can be calculated using numerical integration by setting initial $V_0 = 0$.
-  
-\item \textbf{Differential drive}. Is a nonholonomic robot with three degrees of freedom $(x,y)$ position and $\theta$ orientation. As in kinematic model velocity is used as a control for differential drive model. 
-\begin{align*}
-\dot{x} &= v\cos\theta\\
-\dot{y} &= v\sin\theta\\
-\dot{\theta} &= \omega
-\end{align*}  
-
-\item \textbf{Kinematic car}. As in kinematic point model the car model is controlled by velocity but with orientation $\theta$ and a length $L$ that represent the length of the car. Unlike the differential drive model a car model can not turn on the spot thus the rotational velocity($\dot{\theta}$) is constrained both by the velocity and length of the car.    
-\begin{align*}
-\dot{x} &= v\cos\theta\\
-\dot{y} &= v\sin\theta\\
-\dot{\theta}& = \frac{v}{L}\tan\phi
-\end{align*}  
-
-\item \textbf{Dynamic car}. The only difference between kinematic car and dynamic car is that the dynamic car is controlled by force as mentioned previously. Thus the equation for the dynamic car motion model is given by: 
-\begin{align*}
-\dot{x} &= v\cos\phi\\
-\dot{y} &= v\sin\phi\\
-\dot{\theta}& = \frac{v}{L}\tan\phi\\
-\dot{v} &= F/m
-\end{align*}  
-
-\end{itemize} 
 
 \subsection{Visibility Graphs} 
 \label{sec:vg}
@@ -132,50 +83,59 @@ The visibility graph\cite{berg_visibility_2000} in the Euclidean plane with poly
 \label{sec:rrt}
 Rapidly-exploring Random Trees \cite{lavalle1998rapidly} is an incremental method to quickly explore an entire system of configuration of a model. RRT do not produce an optimal solution but because they can find random path very quickly we can run them multiple times to fine a better path.  
 
-\subsection{“Overview of motion planning”  by Matt Klingensmith}
+\subsection{}
 \label{sec:pp}
-Although this is not an academic work, it could be described as a compilation of such works, described and explained extremely pedagogically. The Article is written by Matt Klingensmith, a robotic researcher and covers everything from the basics of motion planning such as the 'Bug algorithm' all the way down to the more recent discoveries such as RRT* and everything in-between. 
-The relevant parts of this article that was of most use to us were the sections about Visibility graphs and RRT. In these sections, the advantages, disadvantages, strengths and weaknesses of these algorithms were covered.
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Implementation}
 \label{sec:method}
-This project was implemented in Java using v-rep as a simulation tool. In this section we will discuss how the different components of the project discussed in the previous section are implemented in algorithmic therms and how they were simulated.  
-\subsection{Motion model implementation}
+The project consisted of three different parts: "Formation keeping", "Vehicle Routing Problem" and "Collision Avoidance". In this section, each of these problems and the attempted solutions will be covered.  
+\subsection{Formation keeping}
 \label{sec:mmImpl}
-The motion models were implemented in code exactly as the equations shown in Section~\ref{sec:mm}. By defining a frame rate $dt$ the new positions for $(x,y)$ were calculated as $x = \dot{x} * dt$ and $y = \dot{y} * dt$ respectively. 
+In this problem, the agents are placed in predetermined locations and need to enter a formation as fast as possible. Variations of this problem included:
+A) Enter formation with global knowledge of the position of other agents.
+B) Enter formation with local knowledge of the position of other agents.
+C) Enter a moving formation.
 
-\subsection{Path following}
+Problem A) was solved by simply generating a greedy solution, which then was iteratively improved using an exhaustive search. The improvement process consisted of minimizing the sum of the cubes of the distances each agent had to traverse.
+Meaning if vehicle A needed to traverse X meters and vehicle B Y meters, the expression that was minimized was $X^3+Y^3$. This heuristic panelizes the longer distances, and therefore results in a smaller Max distance across all agents.
+
+Problem B)  
+
+Problem C)     
+
+\subsection{Vehicle Routing Problem}
 \label{sec:pf}
 
-Path following is an important part of an autonomous robot. Given a start and target points an autonomous robot needs to be capable of following the shortest path to the target. The algorithm used for path following in this project is a form of Craig Reynolds (http://www.red3d.com/cwr/) algorithmic steering behaviours for animated characters. In Craig Reynolds path-following algorithm the steering force is calculated by\\ $steering\ force = desired\ velocity - current\ velocity$ \\ and steering force is only applied if the robot stray more than a given radius from the path. The target in this algorithm is not the end of the path but any point on the path that lies on a straight line between two points on the path. In the version implemented in this project the path contains points that are relatively close and so the steering force is applied for every path point. 
+The "Vehicle Routing Problem"(VRP), is an NP problem similar to the "Travelling Salesman Problem"(TSP) problem. Unlike the TSP problem, where there is only one traveler traversing every city, we have multiple vehicles that need to divide the cities in between them. 
+
+Our version of the VRP problem had some twists to it.
+Firstly, we are minimizing time, and not distance. Secondly the movements our agents can perform are restricted by the agents motion model. 
+This means that moving from one point to another is not a simple of traversing an Euclidean distance between the two points. Velocity, acceleration, direction and obstacles all play a major role in the path one would need to take when moving from A to B.
+
+As with most NP problems, creating an algorithm that finds the optimal solution was not plausible. We therefore decided to look for an acceptable solution through the use of "Simulated Annealing".
+For this approach, we needed a weighted graph of the map. This was created through the use of "Visibility Graphs" and "A*", using the length of the path created by A* as the weight of the edge. The Simulated Annealing algorithm would then create a greedy solution based on the graph, and make improvements using probabilistic methods.
+
+However, we noticed this solution solved a much too simplified version of the problem at hand.  As explained earlier, the variable being minimized in this problem was time, not distance. Using Euclidean distances as weights in our graphs resulted in finding the shortest path that often could not be followed in a timely manner by a vehicle with restrictive motion models.
+
+Generating accurate weights between each node was not possible due to the weight varying immensely on too many variables such as the ones described earlier. Instead we decided to use the simulated annealing algorithm, not to produce the shortest path, but to produce a large number of short paths. These paths could even be longer than the initial greedy path, as long as they were kept below a set threshold. 
+
+We then would use "Rapidly exploring Random Tree"(RRT), to explore estimate the time it takes for the vehicle to traverse the path, and chose the one that resulted the shortest times.
+Of course, this approach results in some additional margins of error, as RRT reacts extremely random. In order to minimize the effect of this additional randomness, we had to have our algorithm run repeatedly over longer periods of time.
 
 
-		\begin{algorithm}
-			\caption{Path following}
-			\label{PathFollowing}
-			\begin{algorithmic}[1]
-				\Procedure{Path\textendash Following}{}
-				\For{each point $p$ : $Path$ }
-				\State $\theta = angle(position, p)$
-				\State $move(p, \theta)$
-				\While {$checkPoint(position, p)$}//check if check point reached
-				\State $move(p, \theta)$
-				\EndWhile
-				\EndFor
-				\EndProcedure
-			\end{algorithmic}
-		\end{algorithm}
-		
-The method $checkPoint(a,b)$ checks if the robot is with in a given radius of the check point and move tries to apply the necessary force depending on the model to steer the robot to the target. The problem with this algorithm is it does not take in to consideration the velocity of the robot, and if it can not get to the target with it's current velocity it will go in circles until it gets close enough to the check point.
-
-\subsection{Path Finding}
+\subsection{Collision Avoidance}
 \label{sec:pfinding}
 
-As mentioned earlier, the properties of the motion model is a big factor when finding a path. As the complexity of the motion models increases, so does the nature of the path finding algorithm.
-While there are universal algorithms that can be adapted to operate with any given motion model, such as RRT*, the implementation and execution costs can not easily be justified for simpler motion models.
+The Collision Avoidance problem during this project consisted of detection and avoiding not only obstacles, but also other vehicles with only local knowledge.
 
-In our project, we implemented different path finding algorithms for different types of motion models. We will now go through these different algorithms.
+Our initial approach to solving the issue was to implement a repulsion mechanism to each agent. Whenever they get too close to an obstacle, or another agent, the agent would calculate the trajectory that would lead to a crash, and move in the exact opposite direction.
+This however, lead to some weird behavior when cars in a collision course made symmetrical moves in order to avoid the collision, which then lead to a new collision course. The process would remind a lot of when 2 people try to get out of each other ways at the same time and end up blocking each other more.
+
+The solution to this was to implement a priority order, where cars with higher priority ignore collision risks and the car with the lower priority work harder to try to avoid them. This did not completely work either, as sometimes, both cars need to take action in order for a collision to be avoided. 
+
+A middle ground that worked well in the test cases was to have varying degrees of sensitivity amongst the cars. Where cars with low priority are way more sensitive and try to avoid collisions much earlier than a car with a higher priority, who will only start avoiding a collisions when its imminent.
 
 \subsection{Discrete Map}
 \label{sec:dm}
@@ -219,12 +179,7 @@ The combination of methods  that turned out to be most successful in our case wa
 
 
 \subsection{Experiemntal setup}
-The experiments began with reading the specifications of the map from a file. This included the position of the obstacles, their shapes and the poistion of the start/finish points.
-The polygonial obstacles were then represented through a collection of Line2D objects and stored.
-At this point, the RRT algorithm sets in. It starts by adding the starting point to the tree as the root node. A random point in the map is then randomly sampled, and the closest point in the tree to the sampled point is selected. A check is made here in order to see wheter an obstacle blocks the path between the sampled points and the node from the tree. if that is the case, a new point is sampled.
-The unit is then moved from the point in the tree towards the sampled point according to the specifications of the motion model and other general hueristics.
-Once any node in the tree has a clear sight of the goal node, the goal node will start being sampled with a 40\% likelihood.
-
+The experiments are performed by first creating a virtual map based on the provided specifications. Based on this map, path can be generated for each agent using RRT. These paths are imported by each agent, in the Unity client. Additional settings, such as the physical properties, or behavior patterns such as collision avoidance is set and tuned. At this point the simulation is ran through Unity, and the results are observed and documented. 
 
 \subsection{Experiment}
 
@@ -266,21 +221,22 @@ The best ones of these randomly generated paths were very close to the results o
 However, when it came to the car models with lenghts of $ >30$, the algorithm could not find any paths at all, even when it was allowed to run for hours.
 
 \begin{table}
-    \begin{tabular}{llllllllllll}
-    ~   & P11     & P12a     & P12b     & P12c     & P12d    & P13   & P14a          & P14b  & P14c  & P15a  & P15b  \\
-    G1  & 19.438  & 13.3     & 15.45    & 18.97    & 12.42   & 35.66 & 28.16         & 42.48 & 62.88 & 24.14 & -     \\
-    G2  & 19.63   & 17.74    & 21.77    & 26.75    & 18.49   & 37.25 & 28.16         & -     & -     & 6.00  & -     \\
-    G3  & 19.93   & 13.91    & 24.28    & 27.64    & 17.74   & 37.70 & 21.14         & TBD   & TBD   & 6.80  & TBD   \\
-    G4  & 19.65   & -        & 15.11    & 24.36    & -       & 30.36 & 34    & -     & -     & -     & -     \\
-    G5  & 19.6    & 21.27    & ~        & ~        & ~       & 38.07 & 20.31         & ~     & ~     & 5.16  & ~     \\
-    G6  & 25.17   & 19.86    & -        & -        & -       & 112.9 & 61.88         & -     & -     & -     & -     \\
-    G7  & 248     & 198      & 193      & 184      & 100     & 199.5 & 191           & ~     & ~     & ~     & ~     \\
-    G8  & 22      & 29       & 19       & 25       & 25      & 41.6  & 195.63        & ~     & ~     & ~     & ~     \\
-    G9  & 19.69   & 13.23    & 19.69    & 24.83    & 15.44   & 46.00 & 30.75         & -     & -     & -     & -     \\ \rowcolor{LightGray}
-    G10 & 19.4    & 14       & 19       & 26       & 19      & 96    & 32            & ~     & ~     & 30    & ~     \\ 
-    G11 & 19.20   & 13.37    & 17.58    & 20.07    & 13.72   & 30.02 & 19.96         & 57.30 & 70.59 & 6.20  & 11.21 \\
-    G12 & 20.10   & 32.58    & 35.86    & 33.82    & 30.26   & 34.52 & 23.74         & 210.3 & 220.6 & 7.97  & -     \\
-    G13 & 38.19 & 33.24 & 38.74 & 38.424 & 38.96 & 36.8  & -             & -     & -     & -     & ~     \\
+    \begin{tabular}{llllllllll}
+    ~   & P11a  & P11b       & P12a  & P12b  & P13a    & P13b     & P14a          & P14b  & P15a        \\
+    G1  & 16.8  & 26.9(R=30) & 10.3  & 30.2  & ~       & 312      & 27.9          & 11.5  & ~           \\
+    G2  & 13.5  & 33.3       & 11.8  & 23.3  & 54.80   & 51.62    & -             & -     & -           \\
+    G3  & 17.1  & 34         & 13    & 19    & 48      & 34 (L=1) & 74.2          & 32.4  & 77.9        \\
+    G4  & 17.2  & 40.8       & 30    & 28    & ~       & ~        & \\    61\\    & 79    & 170         \\
+    G5  & 16    & 36.8       & 45    & ~     & 98.1    & ~        & 77.61         & ~     & 168.72      \\
+    G6  & 15.6  & ~          & ~     & 37.7  & > 8 min & 61.4     & 38.5          & 28.5  & ~           \\
+    G7  & 16.3  & 21.22      & 11.1  & ~     & 72.02   & ~        & 28.84         & 12.44 & 238.24      \\
+    G8  & 23    & 40         & 53    & ~     & 71.83   & 89.92    & 43            & 36.24 & ~           \\
+    G9  & 10.89 & 19.03      & 5.76  & 26.00 & 57.56   & 28.90    & 27.45         & 10.04 & 96.6        \\
+    G10 & 12.28 & 20.16      & ~     & 25.00 & 68.5    & 53.9     & 49.3          & 22.2  & 163.5       \\
+    G11 & 14.4  & 15.5       & 12.6  & 20.3  & 46.8    & 28.3     & 29.3          & 15.3  & 41.6 (min)  \\
+    G12 & 18.38 & 30.42      & 37.18 & 30.12 & 72.72   & 50.64    & 61.60         & 20.54 & 193.08      \\
+    G13 & 15.38 & 54         & 44    & ~     & 353     & ~        & 63            & 23    & ~           \\
+    ~   & ~     & ~          & ~     & ~     & ~       & ~        & ~             & ~     & ~           \\
     \end{tabular}
 \end{table}
 \pagebreak

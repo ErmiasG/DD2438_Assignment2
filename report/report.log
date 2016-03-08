@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2015.12.5)  8 MAR 2016 15:01
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2015.12.5)  8 MAR 2016 15:20
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -328,64 +328,60 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 
 ] [2
 
-]
-LaTeX Font Info:    Try loading font information for OMS+cmr on input line 81.
+] [3] [4] [5] [6]
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 166.
+
 
 (/usr/share/texlive/texmf-dist/tex/latex/base/omscmr.fd
 File: omscmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <12> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 81.
- [3] [4]
-Missing character: There is no ‚ in font cmbx12!
-Missing character: There is no Ä in font cmbx12!
-Missing character: There is no ú in font cmbx12!
-Missing character: There is no ‚ in font cmbx12!
-Missing character: There is no Ä in font cmbx12!
-Missing character: There is no ù in font cmbx12!
- [5] [6]
-[7] [8] [9] <pictures/polygonalMap.jpg, id=41, 1000.73875pt x 781.92125pt>
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 166.
+ [7]
+<pictures/polygonalMap.jpg, id=33, 1000.73875pt x 781.92125pt>
 File: pictures/polygonalMap.jpg Graphic file (type jpg)
 
 <use pictures/polygonalMap.jpg>
-Package pdftex.def Info: pictures/polygonalMap.jpg used on input line 257.
+Package pdftex.def Info: pictures/polygonalMap.jpg used on input line 212.
 (pdftex.def)             Requested size: 312.00119pt x 243.77708pt.
- [10 <./pictures/polygonalMap.jpg>]
-Overfull \hbox (86.99377pt too wide) in paragraph at lines 269--285
+ [8]
+Overfull \hbox (83.8783pt too wide) in paragraph at lines 224--241
 [][] 
  []
 
-[11]
+[9 <./pictures/polygonalMap.jpg>] [10]
 Missing character: There is no ‚ in font cmr12!
 Missing character: There is no Ä in font cmr12!
 Missing character: There is no ú in font cmr12!
 Missing character: There is no ‚ in font cmr12!
 Missing character: There is no Ä in font cmr12!
 Missing character: There is no ù in font cmr12!
- [12] (./report.bbl) [13] (./report.aux) ) 
+ [11] (./report.bbl) [12] (./report.aux)
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
+ ) 
 Here is how much of TeX's memory you used:
- 4068 strings out of 493304
- 55993 string characters out of 6139871
- 126086 words of memory out of 5000000
- 7437 multiletter control sequences out of 15000+600000
- 13659 words of font info for 52 fonts, out of 8000000 for 9000
+ 4040 strings out of 493304
+ 55557 string characters out of 6139871
+ 126079 words of memory out of 5000000
+ 7410 multiletter control sequences out of 15000+600000
+ 13358 words of font info for 51 fonts, out of 8000000 for 9000
  957 hyphenation exceptions out of 8191
- 38i,14n,43p,930b,328s stack positions out of 5000i,500n,10000p,200000b,80000s
-</usr/share/texlive/texmf-dist/fonts/
-type1/public/amsfonts/cm/cmbx10.pfb></usr/share/texlive/texmf-dist/fonts/type1/
-public/amsfonts/cm/cmbx12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public
-/amsfonts/cm/cmcsc10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsf
-onts/cm/cmmi12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/c
-m/cmmi8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10
-.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></
-usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/sha
-re/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texli
-ve/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/tex
-mf-dist/fonts/type1/public/amsfonts/cm/cmti12.pfb>
-Output written on report.pdf (13 pages, 210330 bytes).
+ 38i,14n,43p,930b,254s stack positions out of 5000i,500n,10000p,200000b,80000s
+</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></us
+r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/shar
+e/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/share/texl
+ive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/tex
+mf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texlive/texmf-dist
+/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/share/texlive/texmf-dist/fonts/
+type1/public/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/fonts/type1/pu
+blic/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/a
+msfonts/cm/cmti12.pfb>
+Output written on report.pdf (12 pages, 181095 bytes).
 PDF statistics:
- 92 PDF objects out of 1000 (max. 8388607)
- 64 compressed objects within 1 object stream
+ 80 PDF objects out of 1000 (max. 8388607)
+ 55 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  6 words of extra memory for PDF output out of 10000 (max. 10000000)
 
