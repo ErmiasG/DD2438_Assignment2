@@ -183,7 +183,23 @@ The experiments are performed by first creating a virtual map based on the provi
 
 \subsection{Experiment}
 
-The experminets were run by simply setting variables to the appropriate values to the ones of the motion model. The algorithm would then run repeatedly, remembering its best result. Once a long period of time, usually 20 minutes, passed without a better path being found, the algorithm would stop.
+The experiments consisted of running our algorithms in several different scenarios created specifically to test their efficiency. The exection of these experiments varried depending on the algorithm taht was ebing tested.
+
+In the case of the formation keeping algorithms, we merely had to change some variables(such as the starting points of vehicles and the shape of the formation) to the appropriate values specified for the test, and then let the algorithm take care of the rest. The specifications of the test are listed below:
+\begin{itemize}
+\item Problem 11a: Global knowledge formation keeping for Dynamic point model with Vmax=100, Amax=1
+\item Problem 11b: Local knowledge formation keeping for Dynamic point model with Vmax=100, Amax=1, Sensing radius 20
+\item Problem 12a: Moving formation for Differential drive model with Wmax=30 deg/s, Vmax=10
+\item Problem 12b: Moving formation for Dynamic car model with L=10, Amax=1, Vmax=10, phimax=45deg
+\end{itemize}
+
+
+For the VRP problem test, the initial path finding algorithm generated 250 randomly generated paths with an euclidean length smaller than that of the original greedy path. These paths were then ran through an RRT algorithm in order to estimate their actual length. Due to the randomness of RRT, the RRT algorithm was ran 100 times for each path, with the fastest result being selected. The specifications of the test are listed below:
+\begin{itemize}
+\item Problem 13a: Vehicle routing problem for Dynamic point model with Vmax=100, Amax=1
+\item Problem 13b: Local knowledge formation keeping for Dynamic point model with Vmax=100, Amax=1, Sensing radius 20
+\end{itemize}
+, In order to run the experiments, we simply set some variables to the appropriate values of the test, and  to the ones of the motion model. The algorithm would then run repeatedly, remembering its best result. Once a long period of time, usually 20 minutes, passed without a better path being found, the algorithm would stop.
 The specifications of the different models were:
 \begin{itemize}
 \item Problem 11: Kinematic point model with Vmax=10
