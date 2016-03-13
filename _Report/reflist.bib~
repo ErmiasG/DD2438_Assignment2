@@ -39,45 +39,77 @@ keywords={Computer simulation;Equations;Mobile robots;Navigation;Orbital robotic
 doi={10.1109/IROS.1989.637948}, 
 month={Sep},}
 
-@book{RussellNorvigAIBook3rd,
-	Author = {Stuart J. Russell and Peter Norvig},
-	Date-Added = {2014-08-23 20:37:06 +0000},
-	Date-Modified = {2014-08-23 20:38:47 +0000},
-	Edition = {3rd},
-	Number = {ISBN 978-0-13-207148-2},
-	Publisher = {Pearson Education},
-	Title = {Artificial Intelligence - A Modern Approach},
-	Year = {2010}}
+@ARTICLE{960341, 
+author={R. W. Beard and J. Lawton and F. Y. Hadaegh}, 
+journal={IEEE Transactions on Control Systems Technology}, 
+title={A coordination architecture for spacecraft formation control}, 
+year={2001}, 
+volume={9}, 
+number={6}, 
+pages={777-790}, 
+keywords={aerospace control;interferometers;space vehicles;coordinated control;deep space;formation flying;leader-following;multiagent coordination;multiple spacecraft coordination;multiple spacecraft interferometer;spacecraft formation control;Instruments;Laboratories;Military aircraft;Mobile robots;Orbital robotics;Propulsion;Robot kinematics;Space technology;Space vehicles;Topology}, 
+doi={10.1109/87.960341}, 
+ISSN={1063-6536}, 
+month={Nov},}
 
-@book{lynch_principles_2005,
-	title = {Principles of Robot Motion: Theory; Algorithms; and Implementation},
-	isbn = {0-262-03327-5},
-	shorttitle = {Principles of Robot Motion},
-	publisher = {The {MIT} Press},
-	author = {Lynch, Kevin M. and Choset, Howie M.},
-	date = {2005}
+@inproceedings{wilkie2009generalized,
+  title={Generalized velocity obstacles},
+  author={Wilkie, David and Van den Berg, Jur and Manocha, Dinesh},
+  booktitle={Intelligent Robots and Systems, 2009. IROS 2009. IEEE/RSJ International Conference on},
+  pages={5573--5578},
+  year={2009},
+  organization={IEEE}
 }
 
-@article{lavalle1998rapidly,
-  title={Rapidly-Exploring Random Trees A New Tool for Path Planning},
-  author={LaValle, Steven M},
-  year={1998}
+@inproceedings{van2008reciprocal,
+  title={Reciprocal velocity obstacles for real-time multi-agent navigation},
+  author={Van den Berg, Jur and Lin, Ming and Manocha, Dinesh},
+  booktitle={Robotics and Automation, 2008. ICRA 2008. IEEE International Conference on},
+  pages={1928--1935},
+  year={2008},
+  organization={IEEE}
 }
 
-@incollection{berg_visibility_2000,
-	title = {Visibility Graphs},
-	rights = {©2000 Springer-Verlag Berlin Heidelberg},
-	isbn = {978-3-662-04247-2 978-3-662-04245-8},
-	url = {http://link.springer.com.focus.lib.kth.se/chapter/10.1007/978-3-662-04245-8_15},
-	abstract = {In Chapter 13 we saw how to plan a path for a robot from a given start position to a given goal position. The algorithm we gave always finds a path if it exists, but we made no claims about the quality of the path: it could make a large detour, or make lots of unnecessary turns. In practical situations we would prefer to find not just any path, but a good path.},
-	pages = {307--317},
-	booktitle = {Computational Geometry},
-	publisher = {Springer Berlin Heidelberg},
-	author = {Berg, Dr Mark de and Kreveld, Dr Marc van and Overmars, Prof Dr Mark and Schwarzkopf, Dr Otfried Cheong},
-	urldate = {2016-02-14},
-	date = {2000},
-	langid = {english},
-	note = {{DOI}: 10.1007/978-3-662-04245-8\_15},
-	keywords = {Algorithm Analysis and Problem Complexity, Complexity, Computer Graphics, Earth Sciences, general, Math Applications in Computer Science, Theory of Computation},
-	file = {Snapshot:/home/ermias/.zotero/zotero/rdghi3jj.default/zotero/storage/5SX36HGR/978-3-662-04245-8_15.html:text/html}
+@article{bazoula2008formation,
+  title={Formation control of multi-robots via fuzzy logic technique},
+  author={Bazoula, Abdelouahab and Djouadi, MS and Maaref, H},
+  journal={International Journal of Computers, Communications \& Control},
+  volume={3},
+  number={3},
+  year={2008}
+}
+
+@article{zadeh1965fuzzy,
+  title={Fuzzy sets},
+  author={Zadeh, Lotfi A},
+  journal={Information and control},
+  volume={8},
+  number={3},
+  pages={338--353},
+  year={1965},
+  publisher={Elsevier}
+}
+
+@book{golden2008vehicle,
+  title={The vehicle routing problem: latest advances and new challenges},
+  author={Golden, Bruce L and Raghavan, Subramanian and Wasil, Edward A},
+  volume={43},
+  year={2008},
+  publisher={Springer Science \& Business Media}
+}
+
+@article{dantzig1959truck,
+  title={The truck dispatching problem},
+  author={Dantzig, George B and Ramser, John H},
+  journal={Management science},
+  volume={6},
+  number={1},
+  pages={80--91},
+  year={1959},
+  publisher={Informs}
+}
+
+@article{johnson1997traveling,
+  title={The traveling salesman problem: A case study in local optimization},
+  author={Johnson, David S and McGeoch, Lyle A}
 }

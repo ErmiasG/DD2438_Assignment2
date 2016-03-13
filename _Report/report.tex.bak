@@ -10,6 +10,7 @@
 \usepackage{cite}
 \usepackage{algorithm}
 \usepackage[noend]{algpseudocode}
+\usepackage{tikz}
 
 \usepackage{color}
 \usepackage{colortbl}
@@ -53,18 +54,14 @@ This paper will discuss formation keeping, collusion avoidance, and vehicle rout
 \section{Introduction}
 \label{sec:intro}
 
-Manoeuvring in formation is a desired characteristic for autonomous robots with applications ranging from  synthesizing a space-based interferometer to covering a grid\cite{945797} or moving large objects using multiple robots. There are two main control architectures or strategies for formation keeping: leader follower\cite{350940} \cite{637948} and virtual structure\cite{960341}. In leader follower one robot will be designated as the leader and the other robots will follow the leaders motion with an offset that represent the formation. On the other hand in virtual structure the formation is seen as a structure with place holders for each robot. Both strategies have there own advantages and disadvantages...  
+Manoeuvring in formation is a desired characteristic for autonomous robots with applications ranging from  synthesizing a space-based interferometer to covering a grid\cite{945797} or moving large objects using multiple robots. There are two main control architectures or strategies for formation keeping: leader follower\cite{350940} \cite{637948} and virtual structure\cite{960341}. In leader follower one robot will be designated as the leader and the other robots will pursue the leaders motion with an offset that represent the formation, and the stability of the tracking error is controlled via feedback control like proportional–integral–derivative controller (PID) or a fuzzy controller\cite{bazoula2008formation}. On the other hand in virtual structure the formation is seen as a structure with place holders for each robot, where robots are striving to keep their place in the virtual structure. Two scenarios of formation keeping are discussed in this paper: the first one is where robots have global knowledge  of their environment. Where as in the second scenario robots only have knowledge of the environment around them given by a visibility radius. The leader following approach to formation keeping is simple to implement and reliable in the global knowledge scenario where there is only one leader, but when it comes to the local knowledge where robots follow leaders closest to them the chain of feedback controls can create a butterfly effect that can magnify the tracking error down the chain making the formation unstable.  
 
-
-
-
-One of the most fundamental cornerstones of autonomous mobile robots is navigation. It is after all perfectly reasonable to expect a 'mobile' robot to be mobile. Unfortunately, it is not always simple to guarantee this feature. Different units with different physical properties move under different constraints. And the interaction with obstacles in the environment introduces an additional level of complexity. Even though this field is rather well explored, and great advances has been made to the point where self-driving cars already is a reality, there still is room for improvement. In this report, we will describe our work done during the first assignment of the DD2438 course, which mainly focuses on navigation of units with varying properties in an obstacle filled area. The purpose of this assignment is to gain an understanding of the theory by studying and implementing existing algorithms and methods.
-
-More specifically, the work that the report describes focuses on generating a path through the obstacle filled area that the unit could follow. This is referred to as 'Path Planning' and is achieved through various algorithms such as Visibility graphs and RRT, which we will describe and compare in detail during the report. The nature and complexity of these generated paths are dependent on the motion model of the units, which is a term for describing the limitation of which the unit was allowed manoeuvre under. The motion models that were explored in this assignment were Discrete, Kinematic and dynamic point models, differential drive model, and Kinematic and Dynamic car models. All of which will be described in more detail in the following chapters. The area that the units needed to navigate through contained non-convex polygon-shaped obstacles. 
+When manoeuvring in an environment where multiple autonomous robots are present collusions are imminent. The problem of finding a collusion free path for robots manoeuvring among static and dynamic obstacles is there for of great importance. The straight forward and easiest way to collusion avoidance is a force-based virtual spring where obstacles have force fields around them that repels robots that came near them. The main disadvantage of this strategy is that the force fields do not take in to consideration the velocity of the robot and the presence of other obstacles. A more reliable approach to collusion avoidance are velocity obstacles(VO)\cite{wilkie2009generalized}\cite{van2008reciprocal}. In Velocity obstacles every agent calculates reachable velocities that will not lead to collusion by considering the velocities of near by agents, and intersecting the velocity obstacle of all agents with in a given radius. Even though this is a reliable approach to collusion avoidance it requires knowledge of every agent's velocity. The final problem discussed in this paper is the vehicle routing problem. The "Vehicle Routing Problem"(VRP), is a combinatorial optimization problem similar to the "Travelling Salesman Problem"(TSP) concerned with the optimal design of a path to be used by a fleet of robots to complete a set of tasks. In this paper the basic VRP with no capacity constraint is considered.      
+ 
 
 \subsection{Contribution} 
  This project is done as an assignment in an introductory course in robotics and does not consist of any real contribution to the field of robotics. Most of the algorithms used in this report are simplifications of already well known and established algorithms. 
-The report will however, hopefully be useful to any novice in the field seeking an insight into math and motion planning with multiple agents.   
+The report will however, hopefully be useful to any novice in the field seeking an insight into formation keeping, collusion avoidance, and vehicle routing problems.
 
 \subsection{Outline}
 In the Section~\ref{sec:relwork},we will describe the related work that we consulted during the execution of the project. The project itself consists of solving three different problems, which are described together with the attempted solutions in the Section~\ref{sec:method}. The experimental setup, as well as details about the experiments themselves can be found in Section~\ref{sec:exps}. And finally, a short summary of the report is given in the Section~\ref{sec:summary}.
@@ -76,21 +73,53 @@ In the Section~\ref{sec:relwork},we will describe the related work that we consu
 \section{Related work}
 \label{sec:relwork}
 In this Section, the theoretical back ground needed to understand this paper and a short description of few related works that we found useful before and during the implementation of our solutions are discussed.
-\subsection{}
-\label{sec:mm}
+\subsection{Formation Keeping}
+\label{sec:fk}
+Formation keeping is a desired characteristic for autonomous robots with many applications. Depending on the application different control architectures can be used.          
 
-\subsection{Visibility Graphs} 
-\label{sec:vg}
-The visibility graph\cite{945797} in the Euclidean plane with polygon obstacle is a graph whose nodes corresponds to the corners of the polygon, and whose edges connect the nodes that can be reached with out crossing a polygon. The visibility graph can then be used to find an optimal path with a graph search algorithm. Visibility graphs are efficient for point models, but for models with higher degree of freedom they do not scale. 
+\subsubsection{Leader-Follower Formation}
+\label{sec:lf}
+The leader follower architecture is particularly well-suited in situations where agents have global knowledge i.e only one leader, but can get unstable when there are more than one leaders. This instability comes from followers trying to correct their tracking error which in-turn introduces a slightly bigger tracking error to their followers.
+A formation in the leader follower architecture is represented by a relative distance as shown in figure 1 and a bearing angle between the leader and the follower\cite{bazoula2008formation}. 
 
- 
-\subsection{Rapidly-exploring Random Trees} 
-\label{sec:rrt}
-Rapidly-exploring Random Trees \cite{lavalle1998rapidly} is an incremental method to quickly explore an entire system of configuration of a model. RRT do not produce an optimal solution but because they can find random path very quickly we can run them multiple times to fine a better path.  
+\begin{figure}
+\centering
+\includegraphics[width=0.8\linewidth]{Leader-Follower}
+\caption{A leader with the relative position of the followers shown in red lines.}
+\label{fig:Leader-Follower}
+\end{figure}  
 
-\subsection{}
-\label{sec:pp}
+In order for the follower mobile robot to pursue the leader they need to make slight adjustments to their speed and bearing angles. This adjustments depend on the tracking error of the agents and use the error as a feedback for the controller. A simple feedback controller can use fuzzy logic. In fuzzy logic unlike boolean logic we can have a degree of truth and falsehood which can be used to decide the control applied to the agent to correct the tracking error.  
 
+\subsubsection{Fuzzy Controller} 
+\label{sec:fc}
+Fuzzy sets were introduced by Zadeh in 1965 to represent/manipulate data and information possessing non-statistical uncertainties\cite{zadeh1965fuzzy}. The main purpose of the fuzzy controller is to make the follower robot maintain a desired distance and bearing from the leader. The tracking error given by $e(p)=position - desired_p$, $e(v)=e(p)_t - e(p)_{t-1}$, $e(\omega) = angle - desired_a $ and $e(\theta) = e(\omega)_t - e(\omega)_{t-1} $ are decomposed in to fuzzy partitions as described in \cite{bazoula2008formation}. Finally the weighted fuzzy set values are used as feedback to the controller.
+
+\subsection{Velocity Obstacles} 
+\label{sec:vo} 
+Finding a collusion free path for robots manoeuvring among static and dynamic obstacles is important for any moving robot that does not work in isolation. Velocity obstacle can be used to calculate colliding relative velocities between one or more agents. Figure 2 shows a velocity obstacle for agent A and an obstacle B. We calculate the velocity obstacle between A and B by first enlarging B by the radius of A, and reducing A to a point. The collision cone is then given by the lines starting for $VB$ (velocity of B) relative to the position of A, and are tangent to the enlarged obstacle B'. We can then try to find reachable velocities for A such that $R_{VA}= VA + maxForce*\delta t$ , and is as close to the desired velocity of A but that is outside the collusion cone.
+
+\begin{figure}
+\centering
+  \begin{tikzpicture}[domain=0:4] 
+    \draw[thin,color=black](1,5) circle (0.3) node[left] {B};
+    \draw[thin,color=black](3,4) circle (0.6);
+    \draw [->] (1,5) -- (3,4)node[left] {VB}; 
+    \draw[color=black] circle (0.3) node[left] {A};
+    \draw[color=black] (3,2.5)circle (0.0) node[left] {VO};
+    \draw [->] (0,0) -- (1,5);
+    \draw [->] (0,0) -- (2.3,0.5)node[left] {VA};
+    \draw [->] (0,0) -- (2,-1)node[left] {VB};
+    \draw [->] (2,-1) -- (2.6,6);
+    \draw [->] (2,-1) -- (4.3,6);
+  \end{tikzpicture}
+  \caption{Velocity obstacle calculated by agent A for obstacle B with velocity VB} \label{fig:VO}
+\end{figure}
+\subsection{Vehicle Routing Problem}
+\label{sec:vrp}
+The vehicle routing problem is first proposed by Dantzig and Ramser \cite{dantzig1959truck}. There are many variants of this problem, such as the Capacitated VRP, in which the capacity of the vehicles is constrained, vehicle routing problem with Time Windows (VRPTW) where tasks need to be completed in a given time frame, and Mixed Fleet VRP where different type of vehicles with different capacity are used for the problem \cite{golden2008vehicle}. In this paper we will only consider the unconstrained variant of the problem. 
+
+The VRP can be formulated as a graph problem with a directed graph $G(V,E)$, where $V= \{ 0, 1,...,n-1 \}$ is the set of n nodes and E is the set of edges. The nodes represent starting points for the vehicles and the tasks and the edges are roads and their weights represent the cost to get to a node. After creating a graph representation of the problem a tour construction heuristic like nearest Nearest Neighbour, or Greedy can be used to create the initial rout. This can then be optimized using local optimization algorithms like 2-opt, which removes two edges and try to reconnect the resulting two paths in a way that the resulting tour is shorter, this can give some improvement but can get stuck in a local optimum. One way to get out of local optimal solutions is Simulated Annealing\cite{aarts2005simulated}. Simulated Annealing is a randomized local search algorithm that allows for none improving moves to be taken in order to get out of a local optimum. In Simulated Annealing (SA) we set a temperature and a cooling rate and we accept bad moves while the temperature is still high and decrease the acceptance probability with the temperature. This is justified by the high probability of getting an improving move in the beginning but this moves will get scarce after some iterations.   
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Implementation}
@@ -104,11 +133,13 @@ B) Enter formation with local knowledge of the position of other agents.
 C) Enter a moving formation.
 
 Problem A) was solved by simply generating a greedy solution, which then was iteratively improved using an exhaustive search. The improvement process consisted of minimizing the sum of the cubes of the distances each agent had to traverse.
-Meaning if vehicle A needed to traverse X meters and vehicle B Y meters, the expression that was minimized was $X^3+Y^3$. This heuristic panelizes the longer distances, and therefore results in a smaller Max distance across all agents.
+Meaning if vehicle A needed to traverse X meters and vehicle B Y meters, the expression that was minimized was $X^3+Y^3$. This heuristic penalizes the longer distances, and therefore results in a smaller Max distance across all agents. 
 
-Problem B)  
+Problem B) was solved by trying to get the agents as close to each other as possible so that every agent can see every other agent. This is achieved by following the closest neighbour that is within the visibility radius and to avoid a deadlock leaving one agent with no leader to follow. This ensures every agent will converge to the position of the one agent without a leader. After the agents are close enough to detect each other the same algorithm as problem A is executed.  
 
-Problem C)     
+Problem C) The moving formation in the case of the global knowledge was implemented with the leader following strategy as mentioned in section \ref{sec:lf} where only the leader have the knowledge of the direction of the formation. On the other hand the local knowledge implementation gives the direction and the formation to every agent ,which will try to come close to each other the same way as Problem B and then choose a position in the formation with first come first served manner. After every position in the formation is is occupied every agent will move to the direction given with the same speed. 
+
+To make sure that every agent is facing the direction of the formation when starting to move, a runway was given for every agent that is long enough to make the agent face the right way.
 
 \subsection{Vehicle Routing Problem}
 \label{sec:pf}
@@ -142,39 +173,9 @@ The solution to this was to implement a priority order, where cars with higher p
 
 A middle ground that worked well in the test cases was to have varying degrees of sensitivity amongst the cars. Where cars with low priority are way more sensitive and try to avoid collisions much earlier than a car with a higher priority, who will only start avoiding a collisions when its imminent.
 
-\subsection{Discrete Map}
-\label{sec:dm}
-The simplest type of motion model is the discrete motion model, where the unit can simply change its position from the current one to any one of the valid neighbours.
-This motion model had to navigate through a grid like map where certain cells were marked as occupied.
-In order to find a path through this map, the map was represented through a adjacency graph. An optimal path could then be calculated through the usage of the A* algorithm.
-\subsection{Polygon Map}
-\label{sec:pm}
-The polygon map is not as straight forward as the simple discrete map. This map can not as easily be represented through a simple grid system without complications. Instead, we chose to represent the polygonal obstacles through Line2D objects in  Java. We could thereby calculate collisions between the trajectory of the unit and the obstacles through the usage of the 'Intersects()' method of that class.
-\subsection{Kinematic point model}
-\label{sec:kpm}
-Besides the discrete point model, the kinematic point model is the simplest model to find a path for. Since the Kinematic point model can instantly switch speed and direction at will with no constraints, it can follow a path consisting of straight lines and sharp turns.
-With this in mind, we chose to use a combination of Visibility graph and A* in order to find an optimal path for this model.
-
-\subsection{Dynamic point and Car models}
-\label{sec:dpm}
-When it came to the dynamic point and car models, things got more complicated. The dimensionality of the problem at hand increased with each addition feature, such as the acceleration, length, the angle of the vehicle and so on. 
-There are tricks and gimmicks available to make visiblity graphs viable for these kind of models, such as virtually increasing the size of the obstacles to account for the size and turning of the car models. However, it did not feel like forcing the algorithm out of its comfort zone by overcomplicating things was a good approach. Especially when there were other algorithms such as RRT that could naturally handle the types of models we were working with without the need for additional changes to the algorithm. We therefore decided to implement RRT for the Dynamic point and Car models.
-While the RRT algorithm manages to find paths at a relatively rapid pace, the paths tend to be suboptimal. There are ways to counteract this by for example implementing the RRT* version of the algorithm, which guarantees optimality at the cost of computation time and implementation complexity. However, we decided to instead take advantage of the features of the plain RRT algorithm, namely its speed and randomness, in order to produce close to optimal paths,
-The idea was to further optimize the running time of our RRT algorithm with the help of heuristics. By doing so, we would be able to generate a high number of possible paths quickly, and pick the best one. If the number of generated paths were to be high enough, we figured that the best ones should be comparable to an optimal path.
-In order to speed up the running time, or in other words, find a valid path quickly, several different strategies and heuristics were tested.  
-The first one we tried was to instead of sampling a completely random point in the map, to instead sample the goal at a certain frequency. While this heuristic was important in order for the algorithm to find a path, it usually led to a large number of branches crashing right into an obstacle in search for the goal. The generation of all these branches not only redundant, but also over crowded the tree, causing searching through the tree to take longer as time passed.
-From this, we concluded that sampling the goal node while not having clear sight of it does little else than directing the flow of the graph towards the goal node, which it also does inefficiently. 
-An alternative that we decided to try out instead was to make the tree spread broadly and rapidly, until it has a clear view of the goal node. At that point, we can start sampling the goal point.
-In order to make the tree spread widely and rapidly, we had to experiment with a set of variables such as speed range, turn range and sample range. 
-The combination of methods  that turned out to be most successful in our case was:
- \begin{itemize}
-\item Maximum speed at all times
-\item Reducing the Maximum allowed turning angle to 30\%
-\item Do not turn at all 60\% of the time
-\item Sample the same point 5 times in a row before randomly choosing a new sample
-\item With these conditions, the tree usually spreads rapidly in all directions before finding and focusing 
-\item its attention towards the goal.
- \end{itemize}
+\subsubsection{Velocity Obstacles}
+\label{sec:voI}
+The implementation of the velocity obstacle was not completed in time for the deadline of this project and was abandoned.  
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -188,7 +189,7 @@ The experiments are performed by first creating a virtual map based on the provi
 
 \subsection{Experiment}
 
-The experiments consisted of running our algorithms in several different scenarios created specifically to test their efficiency. The exection of these experiments varried depending on the algorithm taht was ebing tested.
+The experiments consisted of running our algorithms in several different scenarios created specifically to test their efficiency. The exection of these experiments varried depending on the algorithm that was being tested.
 
 In the case of the formation keeping algorithms, we merely had to change some variables(such as the starting points of vehicles and the shape of the formation) to the appropriate values specified for the test, and then let the algorithm take care of the rest. The specifications of the test are listed below:
 \begin{itemize}
@@ -261,16 +262,9 @@ However, when it came to the car models with lenghts of $ >30$, the algorithm co
 \section{Summary and Conclusions}
 \label{sec:summary}
 \subsection{Summary}
-In summary, we tried to navigate units with different motion models, including dynamic point, dynamic car and kinematic car with the help of RRT. The paths that RRT generated, were random and therefore likely to be sub-optimal. However, due to the speed of which they were generated, we were allowed to create a great number of possible paths and pick the best one.
-In most cases, this proved to be a sufficient strategy. However, when it came to cases where extreme precission was required, such as in cases where large vehicles need to navigate through small spaces, the model did not perform well.
+In summary, we implemented formation keeping with dynamic point and car models and collision avoidance was implemented for dynamic point model and to some extent for the car model. The collision avoidance for the car model need to take in to consideration the maximum steering angle when choosing avoidance velocities. VRP was implemented for both dynamic models.     
 \subsection{Conclusions}
-The strategy that we adopted in our implementation proved to be successful for the test cases where precision was not vital in order to reach a goal.
-In these cases, the probability of randomly arriving to the circumstances that was required for the unit to be able to traverse a choke point proved to be too small with our heuristics.
-This is almost to be expected, since the main purpose of our heuristics were to spread the tree rapidly in all directions without showing too much concern for the final goal destination.
-The algorithm finally turns its attention towards a goal when the goal node has been spotted. But by then, the circumstances of the node that spotted the goal, such as its position, speed and angle would usually prevent it from being able to reach the goal node. 
-
-Group 11, which also used a plain RRT algorithm were more successful with their implementation. Their strategy was the same as our initial strategy of sampling the goal node with a certain frequency. However, they resolved the issue of the tree getting convoluted by branches that “crashed” into the obstacles by performing moves in chains of 10, and then discarding the entire chain if it crashed into an obstacle.
-This was a better strategy than ours since this solved the issue of convoluted trees with redundant and unusable branches, while still retaining the advantage of focusing towards the goal during the entire running time of the algorithm.
+The strategy that was adopted in our implementation proved to be successful in comparison with the performance given by other groups as shown in the table above. In the case of the collision avoidance where precision is more desirable than time the force-based implementation we had was inferieor to the velocity obsta 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

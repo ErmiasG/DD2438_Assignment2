@@ -1,4 +1,15 @@
-\begin{thebibliography}{1}
+\begin{thebibliography}{10}
+
+\bibitem{aarts2005simulated}
+Emile Aarts, Jan Korst, and Wil Michiels.
+\newblock Simulated annealing.
+\newblock In {\em Search methodologies}, pages 187--210. Springer, 2005.
+
+\bibitem{bazoula2008formation}
+Abdelouahab Bazoula, MS~Djouadi, and H~Maaref.
+\newblock Formation control of multi-robots via fuzzy logic technique.
+\newblock {\em International Journal of Computers, Communications \& Control},
+  3(3), 2008.
 
 \bibitem{960341}
 R.~W. Beard, J.~Lawton, and F.~Y. Hadaegh.
@@ -12,10 +23,22 @@ Qin Chen and J.~Y.~S. Luh.
 \newblock In {\em Robotics and Automation, 1994. Proceedings., 1994 IEEE
   International Conference on}, pages 2315--2320 vol.3, May 1994.
 
-\bibitem{lavalle1998rapidly}
-Steven~M LaValle.
-\newblock Rapidly-exploring random trees a new tool for path planning.
-\newblock 1998.
+\bibitem{dantzig1959truck}
+George~B Dantzig and John~H Ramser.
+\newblock The truck dispatching problem.
+\newblock {\em Management science}, 6(1):80--91, 1959.
+
+\bibitem{golden2008vehicle}
+Bruce~L Golden, Subramanian Raghavan, and Edward~A Wasil.
+\newblock {\em The vehicle routing problem: latest advances and new
+  challenges}, volume~43.
+\newblock Springer Science \& Business Media, 2008.
+
+\bibitem{van2008reciprocal}
+Jur Van~den Berg, Ming Lin, and Dinesh Manocha.
+\newblock Reciprocal velocity obstacles for real-time multi-agent navigation.
+\newblock In {\em Robotics and Automation, 2008. ICRA 2008. IEEE International
+  Conference on}, pages 1928--1935. IEEE, 2008.
 
 \bibitem{637948}
 P.~K.~C. Wang.
@@ -25,10 +48,21 @@ P.~K.~C. Wang.
   Robots and Its Applications. IROS '89. Proceedings., IEEE/RSJ International
   Workshop on}, pages 486--493, Sep 1989.
 
+\bibitem{wilkie2009generalized}
+David Wilkie, Jur Van~den Berg, and Dinesh Manocha.
+\newblock Generalized velocity obstacles.
+\newblock In {\em Intelligent Robots and Systems, 2009. IROS 2009. IEEE/RSJ
+  International Conference on}, pages 5573--5578. IEEE, 2009.
+
 \bibitem{945797}
 B.~J. Young, R.~W. Beard, and J.~M. Kelsey.
 \newblock A control scheme for improving multi-vehicle formation maneuvers.
 \newblock In {\em American Control Conference, 2001. Proceedings of the 2001},
   volume~2, pages 704--709 vol.2, 2001.
+
+\bibitem{zadeh1965fuzzy}
+Lotfi~A Zadeh.
+\newblock Fuzzy sets.
+\newblock {\em Information and control}, 8(3):338--353, 1965.
 
 \end{thebibliography}
