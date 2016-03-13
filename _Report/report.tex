@@ -40,7 +40,7 @@ asafari@kth.se & ermiasg@kth.se \\
 \thispagestyle{fancy}
 
 \begin{abstract}
-This paper will discuss autonomous system motion models including path following and path planing algorithms for these models. This is done by researching and implementing four motion models to simulate the movement of objects in a frictionless two dimensional space and then find a working path following and planing algorithms for these models. The final implementation includes motion models for discrete, kinematic (point and car), dynamic (point and car), and differential drive, with a simple path finding algorithm that takes two points (start and target) and attempt to steer an object to its target. The paths for the models were manly constructed using two algorithms: visibility graphs and rapidly exploring random tree (RRT). Visibility graph was shown to perform better for the models with only two dimensions (x and y), only being outperformed by RRT when extra dimensions are involved.  
+This paper will discuss formation keeping, collusion avoidance, and vehicle routing problems in the context of autonomous systems with different motion models. This is done by researching and implementing different approaches to the three problems in a simulation environment and analysing the results. The final implementation includes formation keeping with point and car motion models, a force field based collusion avoidance, and vehicle rout finding that tries to minimizing time using Simulated Annealing and finds the actual trajectory to be followed by a model using Rapidly exploring Random Tree (RRT).  
  
 \end{abstract}
 
@@ -52,6 +52,11 @@ This paper will discuss autonomous system motion models including path following
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
 \label{sec:intro}
+
+Manoeuvring in formation is a desired characteristic for autonomous robots with applications ranging from  synthesizing a space-based interferometer to covering a grid\cite{945797} or moving large objects using multiple robots. There are two main control architectures or strategies for formation keeping: leader follower\cite{350940} \cite{637948} and virtual structure\cite{960341}. In leader follower one robot will be designated as the leader and the other robots will follow the leaders motion with an offset that represent the formation. On the other hand in virtual structure the formation is seen as a structure with place holders for each robot. Both strategies have there own advantages and disadvantages...  
+
+
+
 
 One of the most fundamental cornerstones of autonomous mobile robots is navigation. It is after all perfectly reasonable to expect a 'mobile' robot to be mobile. Unfortunately, it is not always simple to guarantee this feature. Different units with different physical properties move under different constraints. And the interaction with obstacles in the environment introduces an additional level of complexity. Even though this field is rather well explored, and great advances has been made to the point where self-driving cars already is a reality, there still is room for improvement. In this report, we will describe our work done during the first assignment of the DD2438 course, which mainly focuses on navigation of units with varying properties in an obstacle filled area. The purpose of this assignment is to gain an understanding of the theory by studying and implementing existing algorithms and methods.
 
@@ -76,7 +81,7 @@ In this Section, the theoretical back ground needed to understand this paper and
 
 \subsection{Visibility Graphs} 
 \label{sec:vg}
-The visibility graph\cite{berg_visibility_2000} in the Euclidean plane with polygon obstacle is a graph whose nodes corresponds to the corners of the polygon, and whose edges connect the nodes that can be reached with out crossing a polygon. The visibility graph can then be used to find an optimal path with a graph search algorithm. Visibility graphs are efficient for point models, but for models with higher degree of freedom they do not scale. 
+The visibility graph\cite{945797} in the Euclidean plane with polygon obstacle is a graph whose nodes corresponds to the corners of the polygon, and whose edges connect the nodes that can be reached with out crossing a polygon. The visibility graph can then be used to find an optimal path with a graph search algorithm. Visibility graphs are efficient for point models, but for models with higher degree of freedom they do not scale. 
 
  
 \subsection{Rapidly-exploring Random Trees} 
@@ -223,12 +228,7 @@ The specifications of the different models were:
 	\item 15b: L=50
 	\end{itemize}
 \end{itemize}
-\begin{figure}
-\centering
-\includegraphics[width=0.8\linewidth]{polygonalMap}
-\caption{The map that the units had to navigate through}
-\label{fig:histogram}
-\end{figure}
+
 
 \subsection{Results}
 The strategy described in the previous chapters worked perfectly fine for the simpler models such as the point models, and even the shorter car models.

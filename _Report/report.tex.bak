@@ -40,7 +40,7 @@ asafari@kth.se & ermiasg@kth.se \\
 \thispagestyle{fancy}
 
 \begin{abstract}
-This paper will discuss autonomous system motion models including path following and path planing algorithms for these models. This is done by researching and implementing four motion models to simulate the movement of objects in a frictionless two dimensional space and then find a working path following and planing algorithms for these models. The final implementation includes motion models for discrete, kinematic (point and car), dynamic (point and car), and differential drive, with a simple path finding algorithm that takes two points (start and target) and attempt to steer an object to its target. The paths for the models were manly constructed using two algorithms: visibility graphs and rapidly exploring random tree (RRT). Visibility graph was shown to perform better for the models with only two dimensions (x and y), only being outperformed by RRT when extra dimensions are involved.  
+This paper will discuss formation keeping, collusion avoidance, and vehicle routing problems in the context of autonomous systems with different motion models. This is done by researching and implementing different approaches to the three problems in a simulation environment and analysing the results. The final implementation includes formation keeping with point and car motion models, a force field based collusion avoidance, and vehicle rout finding that tries to minimizing time using Simulated Annealing and finds the actual trajectory to be followed by a model using Rapidly exploring Random Tree (RRT).  
  
 \end{abstract}
 
@@ -52,6 +52,11 @@ This paper will discuss autonomous system motion models including path following
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
 \label{sec:intro}
+
+Manoeuvring in formation is a desired characteristic for autonomous robots with applications ranging from  synthesizing a space-based interferometer to covering a grid\cite{945797} or moving large objects using multiple robots. There are two main control architectures or strategies for formation keeping: leader follower\cite{350940} \cite{637948} and virtual structure\cite{960341}. In leader follower one robot will be designated as the leader and the other robots will follow the leaders motion with an offset that represent the formation. On the other hand in virtual structure the formation is seen as a structure with place holders for each robot. Both strategies have there own advantages and disadvantages...  
+
+
+
 
 One of the most fundamental cornerstones of autonomous mobile robots is navigation. It is after all perfectly reasonable to expect a 'mobile' robot to be mobile. Unfortunately, it is not always simple to guarantee this feature. Different units with different physical properties move under different constraints. And the interaction with obstacles in the environment introduces an additional level of complexity. Even though this field is rather well explored, and great advances has been made to the point where self-driving cars already is a reality, there still is room for improvement. In this report, we will describe our work done during the first assignment of the DD2438 course, which mainly focuses on navigation of units with varying properties in an obstacle filled area. The purpose of this assignment is to gain an understanding of the theory by studying and implementing existing algorithms and methods.
 
@@ -76,7 +81,7 @@ In this Section, the theoretical back ground needed to understand this paper and
 
 \subsection{Visibility Graphs} 
 \label{sec:vg}
-The visibility graph\cite{berg_visibility_2000} in the Euclidean plane with polygon obstacle is a graph whose nodes corresponds to the corners of the polygon, and whose edges connect the nodes that can be reached with out crossing a polygon. The visibility graph can then be used to find an optimal path with a graph search algorithm. Visibility graphs are efficient for point models, but for models with higher degree of freedom they do not scale. 
+The visibility graph\cite{945797} in the Euclidean plane with polygon obstacle is a graph whose nodes corresponds to the corners of the polygon, and whose edges connect the nodes that can be reached with out crossing a polygon. The visibility graph can then be used to find an optimal path with a graph search algorithm. Visibility graphs are efficient for point models, but for models with higher degree of freedom they do not scale. 
 
  
 \subsection{Rapidly-exploring Random Trees} 
@@ -183,7 +188,23 @@ The experiments are performed by first creating a virtual map based on the provi
 
 \subsection{Experiment}
 
-The experminets were run by simply setting variables to the appropriate values to the ones of the motion model. The algorithm would then run repeatedly, remembering its best result. Once a long period of time, usually 20 minutes, passed without a better path being found, the algorithm would stop.
+The experiments consisted of running our algorithms in several different scenarios created specifically to test their efficiency. The exection of these experiments varried depending on the algorithm taht was ebing tested.
+
+In the case of the formation keeping algorithms, we merely had to change some variables(such as the starting points of vehicles and the shape of the formation) to the appropriate values specified for the test, and then let the algorithm take care of the rest. The specifications of the test are listed below:
+\begin{itemize}
+\item Problem 11a: Global knowledge formation keeping for Dynamic point model with Vmax=100, Amax=1
+\item Problem 11b: Local knowledge formation keeping for Dynamic point model with Vmax=100, Amax=1, Sensing radius 20
+\item Problem 12a: Moving formation for Differential drive model with Wmax=30 deg/s, Vmax=10
+\item Problem 12b: Moving formation for Dynamic car model with L=10, Amax=1, Vmax=10, phimax=45deg
+\end{itemize}
+
+
+For the VRP problem test, the initial path finding algorithm generated 250 randomly generated paths with an euclidean length smaller than that of the original greedy path. These paths were then ran through an RRT algorithm in order to estimate their actual length. Due to the randomness of RRT, the RRT algorithm was ran 100 times for each path, with the fastest result being selected. The specifications of the test are listed below:
+\begin{itemize}
+\item Problem 13a: Vehicle routing problem for Dynamic point model with Vmax=100, Amax=1
+\item Problem 13b: Local knowledge formation keeping for Dynamic point model with Vmax=100, Amax=1, Sensing radius 20
+\end{itemize}
+, In order to run the experiments, we simply set some variables to the appropriate values of the test, and  to the ones of the motion model. The algorithm would then run repeatedly, remembering its best result. Once a long period of time, usually 20 minutes, passed without a better path being found, the algorithm would stop.
 The specifications of the different models were:
 \begin{itemize}
 \item Problem 11: Kinematic point model with Vmax=10
@@ -207,12 +228,7 @@ The specifications of the different models were:
 	\item 15b: L=50
 	\end{itemize}
 \end{itemize}
-\begin{figure}
-\centering
-\includegraphics[width=0.8\linewidth]{polygonalMap}
-\caption{The map that the units had to navigate through}
-\label{fig:histogram}
-\end{figure}
+
 
 \subsection{Results}
 The strategy described in the previous chapters worked perfectly fine for the simpler models such as the point models, and even the shorter car models.

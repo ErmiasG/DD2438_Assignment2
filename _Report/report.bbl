@@ -1,22 +1,34 @@
 \begin{thebibliography}{1}
 
-\bibitem{berg_visibility_2000}
-Dr~Mark~de Berg, Dr~Marc~van Kreveld, Prof Dr~Mark Overmars, and
-  Dr~Otfried~Cheong Schwarzkopf.
-\newblock Visibility graphs.
-\newblock In {\em Computational Geometry}, pages 307--317. Springer Berlin
-  Heidelberg.
-\newblock {DOI}: 10.1007/978-3-662-04245-8\_15.
+\bibitem{960341}
+R.~W. Beard, J.~Lawton, and F.~Y. Hadaegh.
+\newblock A coordination architecture for spacecraft formation control.
+\newblock {\em IEEE Transactions on Control Systems Technology}, 9(6):777--790,
+  Nov 2001.
+
+\bibitem{350940}
+Qin Chen and J.~Y.~S. Luh.
+\newblock Coordination and control of a group of small mobile robots.
+\newblock In {\em Robotics and Automation, 1994. Proceedings., 1994 IEEE
+  International Conference on}, pages 2315--2320 vol.3, May 1994.
 
 \bibitem{lavalle1998rapidly}
 Steven~M LaValle.
 \newblock Rapidly-exploring random trees a new tool for path planning.
 \newblock 1998.
 
-\bibitem{lynch_principles_2005}
-Kevin~M. Lynch and Howie~M. Choset.
-\newblock {\em Principles of Robot Motion: Theory; Algorithms; and
-  Implementation}.
-\newblock The {MIT} Press.
+\bibitem{637948}
+P.~K.~C. Wang.
+\newblock Navigation strategies for multiple autonomous mobile robots moving in
+  formation.
+\newblock In {\em Intelligent Robots and Systems '89. The Autonomous Mobile
+  Robots and Its Applications. IROS '89. Proceedings., IEEE/RSJ International
+  Workshop on}, pages 486--493, Sep 1989.
+
+\bibitem{945797}
+B.~J. Young, R.~W. Beard, and J.~M. Kelsey.
+\newblock A control scheme for improving multi-vehicle formation maneuvers.
+\newblock In {\em American Control Conference, 2001. Proceedings of the 2001},
+  volume~2, pages 704--709 vol.2, 2001.
 
 \end{thebibliography}

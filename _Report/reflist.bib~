@@ -7,7 +7,37 @@
 
 %% Saved with string encoding Unicode (UTF-8) 
 
+@INPROCEEDINGS{945797, 
+author={B. J. Young and R. W. Beard and J. M. Kelsey}, 
+booktitle={American Control Conference, 2001. Proceedings of the 2001}, 
+title={A control scheme for improving multi-vehicle formation maneuvers}, 
+year={2001}, 
+volume={2}, 
+pages={704-709 vol.2}, 
+keywords={mobile robots;robust control;stability;control scheme;group feedback;multi-vehicle formation maneuvers;robustness;simulation;stability guarantees;wheeled mobile robots;Control systems;Error correction;Feedback;Mobile robots;Orbital robotics;Robot kinematics;Robust stability;Robustness;Trajectory;Vehicle dynamics}, 
+doi={10.1109/ACC.2001.945797}, 
+ISSN={0743-1619}, 
+month={},}
 
+@INPROCEEDINGS{350940, 
+author={Qin Chen and J. Y. S. Luh}, 
+booktitle={Robotics and Automation, 1994. Proceedings., 1994 IEEE International Conference on}, 
+title={Coordination and control of a group of small mobile robots}, 
+year={1994}, 
+pages={2315-2320 vol.3}, 
+keywords={mobile robots;motion control;path planning;stability;constraint conditions;geometric pattern formation;group stability;motion realization;robot orientation alignment;robots control;robots coordination;small mobile robots;transient response bound;Centralized control;Costs;Mobile robots;Motion control;Robot control;Robot kinematics;Robotic assembly;Robustness;Stability;Transient response}, 
+doi={10.1109/ROBOT.1994.350940}, 
+month={May},}
+
+@INPROCEEDINGS{637948, 
+author={P. K. C. Wang}, 
+booktitle={Intelligent Robots and Systems '89. The Autonomous Mobile Robots and Its Applications. IROS '89. Proceedings., IEEE/RSJ International Workshop on}, 
+title={Navigation Strategies For Multiple Autonomous Mobile Robots Moving In Formation}, 
+year={1989}, 
+pages={486-493}, 
+keywords={Computer simulation;Equations;Mobile robots;Navigation;Orbital robotics;Production facilities;Robot kinematics;Space exploration;Stability;Sufficient conditions}, 
+doi={10.1109/IROS.1989.637948}, 
+month={Sep},}
 
 @book{RussellNorvigAIBook3rd,
 	Author = {Stuart J. Russell and Peter Norvig},
@@ -32,4 +62,22 @@
   title={Rapidly-Exploring Random Trees A New Tool for Path Planning},
   author={LaValle, Steven M},
   year={1998}
+}
+
+@incollection{berg_visibility_2000,
+	title = {Visibility Graphs},
+	rights = {©2000 Springer-Verlag Berlin Heidelberg},
+	isbn = {978-3-662-04247-2 978-3-662-04245-8},
+	url = {http://link.springer.com.focus.lib.kth.se/chapter/10.1007/978-3-662-04245-8_15},
+	abstract = {In Chapter 13 we saw how to plan a path for a robot from a given start position to a given goal position. The algorithm we gave always finds a path if it exists, but we made no claims about the quality of the path: it could make a large detour, or make lots of unnecessary turns. In practical situations we would prefer to find not just any path, but a good path.},
+	pages = {307--317},
+	booktitle = {Computational Geometry},
+	publisher = {Springer Berlin Heidelberg},
+	author = {Berg, Dr Mark de and Kreveld, Dr Marc van and Overmars, Prof Dr Mark and Schwarzkopf, Dr Otfried Cheong},
+	urldate = {2016-02-14},
+	date = {2000},
+	langid = {english},
+	note = {{DOI}: 10.1007/978-3-662-04245-8\_15},
+	keywords = {Algorithm Analysis and Problem Complexity, Complexity, Computer Graphics, Earth Sciences, general, Math Applications in Computer Science, Theory of Computation},
+	file = {Snapshot:/home/ermias/.zotero/zotero/rdghi3jj.default/zotero/storage/5SX36HGR/978-3-662-04245-8_15.html:text/html}
 }
